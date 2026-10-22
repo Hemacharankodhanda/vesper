@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../audio/audio_providers.dart';
+import '../../core/platform/haptics.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/utils/formatters.dart';
 
@@ -65,9 +66,12 @@ class _SeekBarState extends State<SeekBar> {
           builder: (context, constraints) => GestureDetector(
             key: const Key('seek_bar_gesture_detector'),
             behavior: HitTestBehavior.opaque,
-            onTapUp: (details) => widget.onSeek(
-              _fraction(details.localPosition.dx, constraints.maxWidth),
-            ),
+            onTapUp: (details) {
+              AppHaptics.selection();
+              widget.onSeek(
+                _fraction(details.localPosition.dx, constraints.maxWidth),
+              );
+            },
             onHorizontalDragStart: (details) => setState(
               () => _drag = _fraction(
                 details.localPosition.dx,
@@ -81,6 +85,7 @@ class _SeekBarState extends State<SeekBar> {
               ),
             ),
             onHorizontalDragEnd: (_) {
+              AppHaptics.selection();
               final end = _drag;
               setState(() => _drag = null);
               if (end != null) widget.onSeek(end);

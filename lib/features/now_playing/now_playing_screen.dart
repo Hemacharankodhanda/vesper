@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../audio/audio_providers.dart';
+import '../../core/platform/haptics.dart';
 import '../../core/theme/palette.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/repositories/library_repository.dart';
@@ -351,6 +352,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> {
         IconButton(
           tooltip: isLiked ? 'Remove from liked' : 'Like',
           onPressed: () {
+            AppHaptics.medium();
             ref.read(likedTracksProvider.notifier).toggle(track.id);
             ref.read(libraryRepositoryProvider).toggleLike(track.id);
           },
@@ -384,24 +386,36 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> {
           icon: Icons.shuffle_rounded,
           tooltip: 'Shuffle',
           active: queue.shuffle,
-          onTap: () => audioService.setShuffle(!queue.shuffle),
+          onTap: () {
+            AppHaptics.selection();
+            audioService.setShuffle(!queue.shuffle);
+          },
         ),
         IconBtn(
           icon: Icons.skip_previous_rounded,
           tooltip: 'Previous',
           size: 40.0,
-          onTap: audioService.previous,
+          onTap: () {
+            AppHaptics.light();
+            audioService.previous();
+          },
         ),
         PlayButton(
           playing: isPlaying,
           color: palette.deep,
-          onTap: audioService.toggle,
+          onTap: () {
+            AppHaptics.selection();
+            audioService.toggle();
+          },
         ),
         IconBtn(
           icon: Icons.skip_next_rounded,
           tooltip: 'Next',
           size: 40.0,
-          onTap: audioService.next,
+          onTap: () {
+            AppHaptics.light();
+            audioService.next();
+          },
         ),
         IconBtn(
           icon: queue.repeat == AudioRepeatMode.one
@@ -410,6 +424,7 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> {
           tooltip: 'Repeat',
           active: queue.repeat != AudioRepeatMode.off,
           onTap: () {
+            AppHaptics.selection();
             final nextMode = switch (queue.repeat) {
               AudioRepeatMode.off => AudioRepeatMode.all,
               AudioRepeatMode.all => AudioRepeatMode.one,

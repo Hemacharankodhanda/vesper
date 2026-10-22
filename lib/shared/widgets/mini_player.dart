@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../audio/audio_providers.dart';
+import '../../core/platform/haptics.dart';
 import '../../core/theme/tokens.dart';
 import '../../features/now_playing/now_playing_screen.dart';
 import 'art_tile.dart';
@@ -138,7 +139,10 @@ class MiniPlayer extends ConsumerWidget {
                         IconButton(
                           iconSize: 22.0,
                           tooltip: 'Previous',
-                          onPressed: audio.previous,
+                          onPressed: () {
+                            AppHaptics.light();
+                            audio.previous();
+                          },
                           icon: const Icon(
                             Icons.skip_previous_rounded,
                             color: AppColors.textPrimary,
@@ -146,7 +150,10 @@ class MiniPlayer extends ConsumerWidget {
                         ),
                       // Play / Pause button
                       GestureDetector(
-                        onTap: audio.toggle,
+                        onTap: () {
+                          AppHaptics.selection();
+                          audio.toggle();
+                        },
                         child: Container(
                           width: 40.0,
                           height: 40.0,
@@ -168,7 +175,10 @@ class MiniPlayer extends ConsumerWidget {
                       IconButton(
                         iconSize: 22.0,
                         tooltip: 'Next',
-                        onPressed: audio.next,
+                        onPressed: () {
+                          AppHaptics.light();
+                          audio.next();
+                        },
                         icon: const Icon(
                           Icons.skip_next_rounded,
                           color: AppColors.textPrimary,
