@@ -224,6 +224,8 @@ class JustAudioService implements AudioPlayerService {
     await _loadCurrentPlaylist();
     if (play) {
       await this.play();
+    } else {
+      await pause();
     }
   }
 

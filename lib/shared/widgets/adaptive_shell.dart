@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../audio/audio_providers.dart';
 import '../../core/theme/tokens.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/library/library_screen.dart';
 import '../../features/now_playing/now_playing_screen.dart';
 import '../../features/search/search_screen.dart';
+import 'mini_player.dart';
 
-class AdaptiveShell extends StatefulWidget {
-  const AdaptiveShell({super.key, this.initialIndex = 3});
+class AdaptiveShell extends ConsumerStatefulWidget {
+  const AdaptiveShell({super.key, this.initialIndex = 0});
 
   final int initialIndex;
 
   @override
-  State<AdaptiveShell> createState() => _AdaptiveShellState();
+  ConsumerState<AdaptiveShell> createState() => _AdaptiveShellState();
 }
 
-class _AdaptiveShellState extends State<AdaptiveShell> {
+class _AdaptiveShellState extends ConsumerState<AdaptiveShell>
+    with WidgetsBindingObserver {
   late int _currentIndex;
 
   final List<Widget> _pages = const [
@@ -28,6 +32,25 @@ class _AdaptiveShellState extends State<AdaptiveShell> {
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(queuePersistenceManagerProvider).restoreState();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
+      ref.read(queuePersistenceManagerProvider).saveCurrentState();
+    }
   }
 
   void _onSelect(int index) {
@@ -39,6 +62,7 @@ class _AdaptiveShellState extends State<AdaptiveShell> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isDesktop = constraints.maxWidth >= AppBreakpoints.compact;
+        final showMiniPlayer = _currentIndex != 3;
 
         if (isDesktop) {
           return Scaffold(
@@ -47,7 +71,18 @@ class _AdaptiveShellState extends State<AdaptiveShell> {
               children: [
                 _buildLeftRail(),
                 Expanded(
-                  child: IndexedStack(index: _currentIndex, children: _pages),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: IndexedStack(
+                          index: _currentIndex,
+                          children: _pages,
+                        ),
+                      ),
+                      if (showMiniPlayer)
+                        const MiniPlayer(isDesktop: true),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -56,7 +91,18 @@ class _AdaptiveShellState extends State<AdaptiveShell> {
 
         return Scaffold(
           backgroundColor: AppColors.bg,
-          body: IndexedStack(index: _currentIndex, children: _pages),
+          body: Column(
+            children: [
+              Expanded(
+                child: IndexedStack(
+                  index: _currentIndex,
+                  children: _pages,
+                ),
+              ),
+              if (showMiniPlayer)
+                const MiniPlayer(isDesktop: false),
+            ],
+          ),
           bottomNavigationBar: _buildBottomNav(),
         );
       },

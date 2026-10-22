@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/theme/palette.dart';
+import '../data/repositories/settings_repository.dart';
 import '../domain/models/queue_state.dart';
 import '../domain/models/track.dart';
 import 'audio_player_service.dart';
@@ -80,3 +81,52 @@ class LikedTracksNotifier extends Notifier<Set<String>> {
 final likedTracksProvider = NotifierProvider<LikedTracksNotifier, Set<String>>(
   LikedTracksNotifier.new,
 );
+
+final queuePersistenceManagerProvider = Provider<QueuePersistenceManager>((ref) {
+  final audio = ref.watch(audioServiceProvider);
+  final settings = ref.watch(settingsRepositoryProvider);
+  return QueuePersistenceManager(audio: audio, settings: settings);
+});
+
+class QueuePersistenceManager {
+  QueuePersistenceManager({required this.audio, required this.settings});
+
+  final AudioPlayerService audio;
+  final SettingsRepository settings;
+
+  Future<void> saveCurrentState({Duration? currentPosition}) async {
+    try {
+      final queue = await audio.queue.first;
+      if (queue.tracks.isEmpty) return;
+      final pos = currentPosition ?? await audio.position.first;
+
+      await settings.saveQueueState(
+        PersistedQueueState(
+          trackIds: queue.tracks.map((t) => t.id).toList(),
+          currentIndex: queue.currentIndex,
+          positionMs: pos.inMilliseconds,
+          shuffle: queue.shuffle,
+          repeat: queue.repeat,
+        ),
+      );
+    } catch (_) {}
+  }
+
+  Future<void> restoreState() async {
+    try {
+      final saved = await settings.loadQueueState();
+      if (saved == null || saved.trackIds.isEmpty) return;
+
+      final tracks = await settings.resolveTracks(saved.trackIds, fakeTracks);
+      if (tracks.isEmpty) return;
+
+      final index = saved.currentIndex.clamp(0, tracks.length - 1);
+      await audio.setQueue(tracks, index: index, play: false);
+      if (saved.positionMs > 0) {
+        await audio.seek(Duration(milliseconds: saved.positionMs));
+      }
+      await audio.setShuffle(saved.shuffle);
+      await audio.setRepeat(saved.repeat);
+    } catch (_) {}
+  }
+}

@@ -90,6 +90,8 @@ class FakeAudioService implements AudioPlayerService {
     _emitState();
     if (play) {
       await this.play();
+    } else {
+      await pause();
     }
   }
 

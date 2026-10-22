@@ -225,6 +225,15 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> {
       ),
       child: Row(
         children: [
+          if (Navigator.of(context).canPop()) ...[
+            IconBtn(
+              icon: Icons.keyboard_arrow_down_rounded,
+              tooltip: 'Collapse',
+              onTap: () => Navigator.of(context).pop(),
+              active: true,
+            ),
+            const SizedBox(width: AppSpacing.s8),
+          ],
           Expanded(
             child: Text(
               track.album,
@@ -285,11 +294,20 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> {
                 scale: isPlaying ? 1.0 : 0.92,
                 duration: const Duration(milliseconds: 400),
                 curve: AppMotion.popCurve,
-                child: ArtTile(
-                  track: tracks[i],
-                  radius: AppRadii.hero,
-                  shadow: true,
-                ),
+                child: i == queue.currentIndex
+                    ? Hero(
+                        tag: 'now_playing_art',
+                        child: ArtTile(
+                          track: tracks[i],
+                          radius: AppRadii.hero,
+                          shadow: true,
+                        ),
+                      )
+                    : ArtTile(
+                        track: tracks[i],
+                        radius: AppRadii.hero,
+                        shadow: true,
+                      ),
               ),
             ),
           ),
