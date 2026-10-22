@@ -40,6 +40,30 @@ final libraryFoldersProvider = StreamProvider<List<String>>((ref) {
   return repo.watchFolders();
 });
 
+final recentlyAddedProvider = StreamProvider<List<Track>>((ref) {
+  final repo = ref.watch(libraryRepositoryProvider);
+  return repo.watchRecentlyAdded();
+});
+
+final recentlyPlayedProvider = StreamProvider<List<Track>>((ref) {
+  final repo = ref.watch(libraryRepositoryProvider);
+  return repo.watchRecentlyPlayed();
+});
+
+class GroupedSearchResult {
+  const GroupedSearchResult({
+    this.tracks = const [],
+    this.albums = const [],
+    this.artists = const [],
+  });
+
+  final List<Track> tracks;
+  final List<Album> albums;
+  final List<Artist> artists;
+
+  bool get isEmpty => tracks.isEmpty && albums.isEmpty && artists.isEmpty;
+}
+
 class LibraryRepository {
   LibraryRepository({required this.database, this.cacheDir});
 
@@ -108,6 +132,52 @@ class LibraryRepository {
     }
   }
 
+  Stream<List<Track>> watchRecentlyAdded({int limit = 10}) {
+    return (database.select(database.tracks)
+          ..orderBy([(t) => OrderingTerm.desc(t.addedAt)])
+          ..limit(limit))
+        .watch()
+        .map((rows) => rows.map(_mapTrackRow).toList());
+  }
+
+  Stream<List<Track>> watchRecentlyPlayed({int limit = 6}) {
+    return (database.select(database.tracks)
+          ..where((t) => t.lastPlayedAt.isNotNull())
+          ..orderBy([(t) => OrderingTerm.desc(t.lastPlayedAt)])
+          ..limit(limit))
+        .watch()
+        .map((rows) => rows.map(_mapTrackRow).toList());
+  }
+
+  Future<List<Track>> getTracksForAlbum(String albumId) async {
+    final rows = await (database.select(database.tracks)
+          ..where((t) => t.albumId.equals(albumId))
+          ..orderBy([(t) => OrderingTerm.asc(t.trackNo), (t) => OrderingTerm.asc(t.title)]))
+        .get();
+    return rows.map(_mapTrackRow).toList();
+  }
+
+  Future<List<Track>> getTracksForArtist(String artistName) async {
+    final rows = await (database.select(database.tracks)
+          ..where((t) => t.albumArtist.equals(artistName))
+          ..orderBy([(t) => OrderingTerm.asc(t.title)]))
+        .get();
+    return rows.map(_mapTrackRow).toList();
+  }
+
+  Future<void> recordTrackPlayed(String trackId) async {
+    final now = DateTime.now();
+    final track = await (database.select(database.tracks)..where((t) => t.id.equals(trackId))).getSingleOrNull();
+    if (track != null) {
+      await (database.update(database.tracks)..where((t) => t.id.equals(trackId))).write(
+        app_db.TracksCompanion(
+          playCount: Value(track.playCount + 1),
+          lastPlayedAt: Value(now),
+        ),
+      );
+    }
+  }
+
   Future<List<Track>> search(String query) async {
     final normalized = '%${query.toLowerCase()}%';
     final rows =
@@ -119,6 +189,41 @@ class LibraryRepository {
             ))
             .get();
     return rows.map(_mapTrackRow).toList();
+  }
+
+  Future<GroupedSearchResult> searchGrouped(String query) async {
+    if (query.trim().isEmpty) {
+      return const GroupedSearchResult();
+    }
+    final normalized = '%${query.trim().toLowerCase()}%';
+    final trackRows = await (database.select(database.tracks)
+          ..where(
+            (t) =>
+                t.title.lower().like(normalized) |
+                (t.albumArtist.isNotNull() & t.albumArtist.lower().like(normalized)),
+          )
+          ..limit(30))
+        .get();
+
+    final albumRows = await (database.select(database.albums)
+          ..where(
+            (a) =>
+                a.title.lower().like(normalized) |
+                (a.albumArtist.isNotNull() & a.albumArtist.lower().like(normalized)),
+          )
+          ..limit(10))
+        .get();
+
+    final artistRows = await (database.select(database.artists)
+          ..where((a) => a.name.lower().like(normalized))
+          ..limit(10))
+        .get();
+
+    return GroupedSearchResult(
+      tracks: trackRows.map(_mapTrackRow).toList(),
+      albums: albumRows.map(_mapAlbumRow).toList(),
+      artists: artistRows.map(_mapArtistRow).toList(),
+    );
   }
 
   Stream<ScanProgress> scanAllFolders() async* {
