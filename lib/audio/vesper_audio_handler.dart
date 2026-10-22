@@ -4,7 +4,8 @@ import '../domain/models/track.dart';
 
 /// Background audio handler that bridges Vesper to Android system notifications,
 /// lock screen media controls, headset events, and desktop SMTC.
-class VesperAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
+class VesperAudioHandler extends BaseAudioHandler
+    with QueueHandler, SeekHandler {
   VesperAudioHandler();
 
   Function()? onPlay;
@@ -65,14 +66,18 @@ class VesperAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler
 
   void syncTracks(List<Track> tracks) {
     queue.add(
-      tracks.map((t) => MediaItem(
-        id: t.id,
-        album: t.album,
-        title: t.title,
-        artist: t.artist,
-        duration: t.duration,
-        artUri: t.artPath != null ? Uri.file(t.artPath!) : null,
-      )).toList(),
+      tracks
+          .map(
+            (t) => MediaItem(
+              id: t.id,
+              album: t.album,
+              title: t.title,
+              artist: t.artist,
+              duration: t.duration,
+              artUri: t.artPath != null ? Uri.file(t.artPath!) : null,
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -95,7 +100,8 @@ class VesperAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler
   Future<void> skipToPrevious() async => onSkipToPrevious?.call();
 
   @override
-  Future<void> skipToQueueItem(int index) async => onSkipToQueueItem?.call(index);
+  Future<void> skipToQueueItem(int index) async =>
+      onSkipToQueueItem?.call(index);
 
   @override
   Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) async {
@@ -107,7 +113,8 @@ class VesperAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler
   Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {
     final mode = switch (repeatMode) {
       AudioServiceRepeatMode.none => AudioRepeatMode.off,
-      AudioServiceRepeatMode.all || AudioServiceRepeatMode.group => AudioRepeatMode.all,
+      AudioServiceRepeatMode.all ||
+      AudioServiceRepeatMode.group => AudioRepeatMode.all,
       AudioServiceRepeatMode.one => AudioRepeatMode.one,
     };
     onSetRepeat?.call(mode);

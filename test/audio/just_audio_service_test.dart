@@ -66,17 +66,20 @@ void main() {
       expect(queue.tracks.any((t) => t.id == 'bonus_1'), isFalse);
     });
 
-    test('FakeAudioService repeat and shuffle modes toggle correctly', () async {
-      final service = FakeAudioService();
-      addTearDown(() => service.dispose());
+    test(
+      'FakeAudioService repeat and shuffle modes toggle correctly',
+      () async {
+        final service = FakeAudioService();
+        addTearDown(() => service.dispose());
 
-      await service.setShuffle(true);
-      var queue = await service.queue.first;
-      expect(queue.shuffle, isTrue);
+        await service.setShuffle(true);
+        var queue = await service.queue.first;
+        expect(queue.shuffle, isTrue);
 
-      await service.setRepeat(AudioRepeatMode.one);
-      queue = await service.queue.first;
-      expect(queue.repeat, AudioRepeatMode.one);
-    });
+        await service.setRepeat(AudioRepeatMode.one);
+        queue = await service.queue.first;
+        expect(queue.repeat, AudioRepeatMode.one);
+      },
+    );
   });
 }

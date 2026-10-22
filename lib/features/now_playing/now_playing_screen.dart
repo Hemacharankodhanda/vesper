@@ -29,7 +29,8 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> {
   }
 
   void _syncPager(int targetIndex) {
-    if (!_pageController.hasClients || !_pageController.position.haveDimensions) {
+    if (!_pageController.hasClients ||
+        !_pageController.position.haveDimensions) {
       return;
     }
     final current = _pageController.page?.round() ?? 0;

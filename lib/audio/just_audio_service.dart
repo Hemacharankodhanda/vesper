@@ -71,7 +71,9 @@ class JustAudioService implements AudioPlayerService {
     // Sequence / current index updates
     _subscriptions.add(
       _player.currentIndexStream.listen((idx) {
-        if (idx != null && idx != _queueState.currentIndex && idx < _queueState.tracks.length) {
+        if (idx != null &&
+            idx != _queueState.currentIndex &&
+            idx < _queueState.tracks.length) {
           _queueState = _queueState.copyWith(currentIndex: idx);
           _currentTrackCtrl.add(_queueState.currentTrack);
           _queueCtrl.add(_queueState);
@@ -166,7 +168,10 @@ class JustAudioService implements AudioPlayerService {
         final playlist = ConcatenatingAudioSource(children: audioSources);
         await _player.setAudioSource(
           playlist,
-          initialIndex: _queueState.currentIndex.clamp(0, audioSources.length - 1),
+          initialIndex: _queueState.currentIndex.clamp(
+            0,
+            audioSources.length - 1,
+          ),
           initialPosition: Duration.zero,
         );
       }
@@ -206,7 +211,11 @@ class JustAudioService implements AudioPlayerService {
   }
 
   @override
-  Future<void> setQueue(List<Track> tracks, {int index = 0, bool play = true}) async {
+  Future<void> setQueue(
+    List<Track> tracks, {
+    int index = 0,
+    bool play = true,
+  }) async {
     _queueState = _queueState.copyWith(
       tracks: tracks,
       currentIndex: tracks.isEmpty ? 0 : index.clamp(0, tracks.length - 1),
@@ -276,7 +285,9 @@ class JustAudioService implements AudioPlayerService {
   @override
   Future<void> previous() async {
     if (_player.position.inSeconds < 3 && _queueState.tracks.length > 1) {
-      final prevIndex = (_queueState.currentIndex - 1 + _queueState.tracks.length) % _queueState.tracks.length;
+      final prevIndex =
+          (_queueState.currentIndex - 1 + _queueState.tracks.length) %
+          _queueState.tracks.length;
       await jumpTo(prevIndex);
     } else {
       await seek(Duration.zero);
@@ -327,7 +338,10 @@ class JustAudioService implements AudioPlayerService {
   @override
   Future<void> playNext(Track t) async {
     final newTracks = List<Track>.from(_queueState.tracks);
-    final insertIndex = (_queueState.currentIndex + 1).clamp(0, newTracks.length);
+    final insertIndex = (_queueState.currentIndex + 1).clamp(
+      0,
+      newTracks.length,
+    );
     newTracks.insert(insertIndex, t);
     _queueState = _queueState.copyWith(tracks: newTracks);
     _queueCtrl.add(_queueState);
@@ -352,7 +366,10 @@ class JustAudioService implements AudioPlayerService {
     } else if (newIndex >= newTracks.length) {
       newIndex = newTracks.isEmpty ? 0 : newTracks.length - 1;
     }
-    _queueState = _queueState.copyWith(tracks: newTracks, currentIndex: newIndex);
+    _queueState = _queueState.copyWith(
+      tracks: newTracks,
+      currentIndex: newIndex,
+    );
     _currentTrackCtrl.add(_queueState.currentTrack);
     _queueCtrl.add(_queueState);
     _syncSystemMedia();
@@ -369,12 +386,17 @@ class JustAudioService implements AudioPlayerService {
     int newIndex = _queueState.currentIndex;
     if (_queueState.currentIndex == from) {
       newIndex = to;
-    } else if (from < _queueState.currentIndex && to >= _queueState.currentIndex) {
+    } else if (from < _queueState.currentIndex &&
+        to >= _queueState.currentIndex) {
       newIndex--;
-    } else if (from > _queueState.currentIndex && to <= _queueState.currentIndex) {
+    } else if (from > _queueState.currentIndex &&
+        to <= _queueState.currentIndex) {
       newIndex++;
     }
-    _queueState = _queueState.copyWith(tracks: newTracks, currentIndex: newIndex);
+    _queueState = _queueState.copyWith(
+      tracks: newTracks,
+      currentIndex: newIndex,
+    );
     _currentTrackCtrl.add(_queueState.currentTrack);
     _queueCtrl.add(_queueState);
     _syncSystemMedia();
