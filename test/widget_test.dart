@@ -13,7 +13,9 @@ void main() {
         overrides: [
           libraryTracksProvider.overrideWith((ref) => Stream.value(fakeTracks)),
           recentlyAddedProvider.overrideWith((ref) => Stream.value(fakeTracks)),
-          recentlyPlayedProvider.overrideWith((ref) => Stream.value(fakeTracks)),
+          recentlyPlayedProvider.overrideWith(
+            (ref) => Stream.value(fakeTracks),
+          ),
         ],
         child: const VesperApp(),
       ),

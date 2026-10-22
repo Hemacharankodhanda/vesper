@@ -150,26 +150,35 @@ class LibraryRepository {
   }
 
   Future<List<Track>> getTracksForAlbum(String albumId) async {
-    final rows = await (database.select(database.tracks)
-          ..where((t) => t.albumId.equals(albumId))
-          ..orderBy([(t) => OrderingTerm.asc(t.trackNo), (t) => OrderingTerm.asc(t.title)]))
-        .get();
+    final rows =
+        await (database.select(database.tracks)
+              ..where((t) => t.albumId.equals(albumId))
+              ..orderBy([
+                (t) => OrderingTerm.asc(t.trackNo),
+                (t) => OrderingTerm.asc(t.title),
+              ]))
+            .get();
     return rows.map(_mapTrackRow).toList();
   }
 
   Future<List<Track>> getTracksForArtist(String artistName) async {
-    final rows = await (database.select(database.tracks)
-          ..where((t) => t.albumArtist.equals(artistName))
-          ..orderBy([(t) => OrderingTerm.asc(t.title)]))
-        .get();
+    final rows =
+        await (database.select(database.tracks)
+              ..where((t) => t.albumArtist.equals(artistName))
+              ..orderBy([(t) => OrderingTerm.asc(t.title)]))
+            .get();
     return rows.map(_mapTrackRow).toList();
   }
 
   Future<void> recordTrackPlayed(String trackId) async {
     final now = DateTime.now();
-    final track = await (database.select(database.tracks)..where((t) => t.id.equals(trackId))).getSingleOrNull();
+    final track = await (database.select(
+      database.tracks,
+    )..where((t) => t.id.equals(trackId))).getSingleOrNull();
     if (track != null) {
-      await (database.update(database.tracks)..where((t) => t.id.equals(trackId))).write(
+      await (database.update(
+        database.tracks,
+      )..where((t) => t.id.equals(trackId))).write(
         app_db.TracksCompanion(
           playCount: Value(track.playCount + 1),
           lastPlayedAt: Value(now),
@@ -196,28 +205,33 @@ class LibraryRepository {
       return const GroupedSearchResult();
     }
     final normalized = '%${query.trim().toLowerCase()}%';
-    final trackRows = await (database.select(database.tracks)
-          ..where(
-            (t) =>
-                t.title.lower().like(normalized) |
-                (t.albumArtist.isNotNull() & t.albumArtist.lower().like(normalized)),
-          )
-          ..limit(30))
-        .get();
+    final trackRows =
+        await (database.select(database.tracks)
+              ..where(
+                (t) =>
+                    t.title.lower().like(normalized) |
+                    (t.albumArtist.isNotNull() &
+                        t.albumArtist.lower().like(normalized)),
+              )
+              ..limit(30))
+            .get();
 
-    final albumRows = await (database.select(database.albums)
-          ..where(
-            (a) =>
-                a.title.lower().like(normalized) |
-                (a.albumArtist.isNotNull() & a.albumArtist.lower().like(normalized)),
-          )
-          ..limit(10))
-        .get();
+    final albumRows =
+        await (database.select(database.albums)
+              ..where(
+                (a) =>
+                    a.title.lower().like(normalized) |
+                    (a.albumArtist.isNotNull() &
+                        a.albumArtist.lower().like(normalized)),
+              )
+              ..limit(10))
+            .get();
 
-    final artistRows = await (database.select(database.artists)
-          ..where((a) => a.name.lower().like(normalized))
-          ..limit(10))
-        .get();
+    final artistRows =
+        await (database.select(database.artists)
+              ..where((a) => a.name.lower().like(normalized))
+              ..limit(10))
+            .get();
 
     return GroupedSearchResult(
       tracks: trackRows.map(_mapTrackRow).toList(),
@@ -255,12 +269,17 @@ class LibraryRepository {
   }
 
   Album _mapAlbumRow(app_db.Album row) {
+    String? artPath;
+    if (row.artHash != null && cacheDir != null) {
+      artPath = p.join(cacheDir!.path, 'covers', '${row.artHash}.jpg');
+    }
     return Album(
       id: row.id,
       title: row.title,
       albumArtist: row.albumArtist,
       year: row.year,
       artHash: row.artHash,
+      artPath: artPath,
     );
   }
 

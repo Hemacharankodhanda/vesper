@@ -10,10 +10,7 @@ import 'art_tile.dart';
 import 'track_row.dart';
 
 class AlbumDetailSheet extends ConsumerWidget {
-  const AlbumDetailSheet({
-    super.key,
-    required this.album,
-  });
+  const AlbumDetailSheet({super.key, required this.album});
 
   final Album album;
 
@@ -47,14 +44,19 @@ class AlbumDetailSheet extends ConsumerWidget {
       height: MediaQuery.of(context).size.height * 0.75,
       decoration: const BoxDecoration(
         color: AppColors.surfaceHigh,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.sheet)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadii.sheet),
+        ),
       ),
       child: Column(
         children: [
           // Drag handle
           Center(
             child: Container(
-              margin: const EdgeInsets.only(top: AppSpacing.s12, bottom: AppSpacing.s8),
+              margin: const EdgeInsets.only(
+                top: AppSpacing.s12,
+                bottom: AppSpacing.s8,
+              ),
               width: 36.0,
               height: 4.0,
               decoration: BoxDecoration(
@@ -140,10 +142,7 @@ class AlbumDetailSheet extends ConsumerWidget {
 }
 
 class ArtistDetailSheet extends ConsumerWidget {
-  const ArtistDetailSheet({
-    super.key,
-    required this.artist,
-  });
+  const ArtistDetailSheet({super.key, required this.artist});
 
   final Artist artist;
 
@@ -168,14 +167,19 @@ class ArtistDetailSheet extends ConsumerWidget {
       height: MediaQuery.of(context).size.height * 0.75,
       decoration: const BoxDecoration(
         color: AppColors.surfaceHigh,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.sheet)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadii.sheet),
+        ),
       ),
       child: Column(
         children: [
           // Drag handle
           Center(
             child: Container(
-              margin: const EdgeInsets.only(top: AppSpacing.s12, bottom: AppSpacing.s8),
+              margin: const EdgeInsets.only(
+                top: AppSpacing.s12,
+                bottom: AppSpacing.s8,
+              ),
               width: 36.0,
               height: 4.0,
               decoration: BoxDecoration(
@@ -195,7 +199,11 @@ class ArtistDetailSheet extends ConsumerWidget {
                     color: AppColors.surface,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.person_rounded, size: 32.0, color: AppColors.textSecondary),
+                  child: const Icon(
+                    Icons.person_rounded,
+                    size: 32.0,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 const SizedBox(width: AppSpacing.s16),
                 Expanded(

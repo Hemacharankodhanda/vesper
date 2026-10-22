@@ -15,13 +15,19 @@ void main() {
       expect(lines.length, 3);
       // Verify sorted order
       expect(lines[0].text, 'First line of the song');
-      expect(lines[0].timestamp, const Duration(seconds: 12, milliseconds: 300));
+      expect(
+        lines[0].timestamp,
+        const Duration(seconds: 12, milliseconds: 300),
+      );
 
       expect(lines[1].text, 'Pre-chorus line out of order');
       expect(lines[1].timestamp, const Duration(seconds: 45));
 
       expect(lines[2].text, 'Second line with chorus');
-      expect(lines[2].timestamp, const Duration(minutes: 1, seconds: 5, milliseconds: 800));
+      expect(
+        lines[2].timestamp,
+        const Duration(minutes: 1, seconds: 5, milliseconds: 800),
+      );
     });
 
     test('ignores non-timestamp tags and empty lines', () {

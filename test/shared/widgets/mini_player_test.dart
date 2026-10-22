@@ -8,20 +8,18 @@ import 'package:vesper/domain/models/track.dart';
 import 'package:vesper/shared/widgets/mini_player.dart';
 
 void main() {
-  testWidgets('MiniPlayer displays track info and responds to play toggle', (tester) async {
+  testWidgets('MiniPlayer displays track info and responds to play toggle', (
+    tester,
+  ) async {
     final fakeAudio = FakeAudioService();
     await fakeAudio.setQueue(fakeTracks, index: 0, play: false);
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          audioServiceProvider.overrideWithValue(fakeAudio),
-        ],
+        overrides: [audioServiceProvider.overrideWithValue(fakeAudio)],
         child: MaterialApp(
           theme: AppTheme.darkTheme,
-          home: const Scaffold(
-            body: MiniPlayer(isDesktop: false),
-          ),
+          home: const Scaffold(body: MiniPlayer(isDesktop: false)),
         ),
       ),
     );

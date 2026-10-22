@@ -39,7 +39,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       (t) => t.title.toUpperCase().startsWith(letter),
     );
     if (index != -1) {
-      final offset = (index * 72.0).clamp(0.0, _scrollController.position.maxScrollExtent);
+      final offset = (index * 72.0).clamp(
+        0.0,
+        _scrollController.position.maxScrollExtent,
+      );
       _scrollController.animateTo(
         offset,
         duration: AppMotion.fast,
@@ -77,7 +80,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             const SizedBox(height: AppSpacing.s12),
             Expanded(
               child: switch (_selectedTab) {
-                0 => _buildSongsView(tracksAsync, currentTrack, isPlaying, palette.light),
+                0 => _buildSongsView(
+                  tracksAsync,
+                  currentTrack,
+                  isPlaying,
+                  palette.light,
+                ),
                 1 => _buildAlbumsView(albumsAsync),
                 2 => _buildArtistsView(artistsAsync),
                 _ => _buildPlaylistsView(),
@@ -99,10 +107,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       ),
       child: Row(
         children: [
-          Text(
-            'Library',
-            style: AppTypography.display.copyWith(fontSize: 28),
-          ),
+          Text('Library', style: AppTypography.display.copyWith(fontSize: 28)),
           const Spacer(),
           IconButton(
             tooltip: 'Add Music Folder',
@@ -111,10 +116,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           ),
           IconButton(
             tooltip: 'Settings',
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const SettingsScreen())),
+            icon: const Icon(
+              Icons.settings_outlined,
+              color: AppColors.textPrimary,
             ),
-            icon: const Icon(Icons.settings_outlined, color: AppColors.textPrimary),
           ),
         ],
       ),
@@ -126,7 +134,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPaddingMobile),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.screenPaddingMobile,
+      ),
       child: Row(
         children: List.generate(tabs.length, (i) {
           final isSelected = _selectedTab == i;
@@ -162,9 +172,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         itemCount: 8,
         itemBuilder: (_, _) => const ShimmerSkeletonRow(),
       ),
-      error: (_, _) => const EmptyState(
-        message: 'Could not load library songs',
-      ),
+      error: (_, _) =>
+          const EmptyState(message: 'Could not load library songs'),
       data: (dbTracks) {
         // Fall back to fakeTracks if local library has no folders scanned yet
         final tracks = dbTracks.isNotEmpty ? dbTracks : fakeTracks;
@@ -183,6 +192,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
               controller: _scrollController,
               padding: const EdgeInsets.only(bottom: 96.0, right: 28.0),
               itemCount: tracks.length,
+              itemExtent: 72.0,
               itemBuilder: (context, i) {
                 final track = tracks[i];
                 final isCurrent = currentTrack?.id == track.id;
@@ -208,11 +218,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((letter) {
+                    children: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((
+                      letter,
+                    ) {
                       return GestureDetector(
                         onTap: () => _scrollToLetter(letter, tracks),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 2.0,
+                            horizontal: 4.0,
+                          ),
                           child: Text(
                             letter,
                             style: AppTypography.captionMuted.copyWith(
@@ -241,13 +256,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         final albums = dbAlbums.isNotEmpty
             ? dbAlbums
             : fakeTracks
-                .map((t) => Album(
+                  .map(
+                    (t) => Album(
                       id: t.album,
                       title: t.album,
                       albumArtist: t.artist,
-                    ))
-                .toSet()
-                .toList();
+                    ),
+                  )
+                  .toSet()
+                  .toList();
 
         if (albums.isEmpty) {
           return EmptyState(
@@ -259,7 +276,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
         return LayoutBuilder(
           builder: (context, constraints) {
-            final crossAxisCount = (constraints.maxWidth / 160.0).floor().clamp(2, 6);
+            final crossAxisCount = (constraints.maxWidth / 160.0).floor().clamp(
+              2,
+              6,
+            );
             return GridView.builder(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.screenPaddingMobile,
@@ -296,9 +316,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         final artists = dbArtists.isNotEmpty
             ? dbArtists
             : fakeTracks
-                .map((t) => Artist(id: t.artist, name: t.artist))
-                .toSet()
-                .toList();
+                  .map((t) => Artist(id: t.artist, name: t.artist))
+                  .toSet()
+                  .toList();
 
         if (artists.isEmpty) {
           return EmptyState(
@@ -322,10 +342,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   color: AppColors.surfaceHigh,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.person_rounded, color: AppColors.textSecondary),
+                child: const Icon(
+                  Icons.person_rounded,
+                  color: AppColors.textSecondary,
+                ),
               ),
               title: Text(artist.name, style: AppTypography.body),
-              trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
+              trailing: const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.textMuted,
+              ),
             );
           },
         );
@@ -365,7 +391,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 if (ctx.mounted) Navigator.of(ctx).pop();
               }
             },
-            child: Text('Create', style: AppTypography.body.copyWith(fontWeight: FontWeight.w600)),
+            child: Text(
+              'Create',
+              style: AppTypography.body.copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -400,10 +429,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   color: AppColors.surfaceHigh,
                   borderRadius: AppRadii.brSmall,
                 ),
-                child: const Icon(Icons.queue_music_rounded, color: AppColors.accentFallback),
+                child: const Icon(
+                  Icons.queue_music_rounded,
+                  color: AppColors.accentFallback,
+                ),
               ),
               title: Text(playlist.name, style: AppTypography.body),
-              trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
+              trailing: const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.textMuted,
+              ),
               onTap: () => PlaylistDetailSheet.show(context, playlist),
             );
           },

@@ -43,19 +43,26 @@ abstract final class AppTheme {
       highlightColor: Colors.transparent,
       fontFamily: AppTypography.bodyFont,
       textTheme: TextTheme(
-        displayLarge:
-            AppTypography.display.copyWith(color: const Color(0xFF14151A)),
-        displayMedium:
-            AppTypography.display.copyWith(color: const Color(0xFF14151A)),
-        titleLarge: AppTypography.title.copyWith(color: const Color(0xFF14151A)),
-        titleMedium:
-            AppTypography.title.copyWith(color: const Color(0xFF14151A)),
+        displayLarge: AppTypography.display.copyWith(
+          color: const Color(0xFF14151A),
+        ),
+        displayMedium: AppTypography.display.copyWith(
+          color: const Color(0xFF14151A),
+        ),
+        titleLarge: AppTypography.title.copyWith(
+          color: const Color(0xFF14151A),
+        ),
+        titleMedium: AppTypography.title.copyWith(
+          color: const Color(0xFF14151A),
+        ),
         bodyLarge: AppTypography.body.copyWith(color: const Color(0xFF14151A)),
         bodyMedium: AppTypography.body.copyWith(color: const Color(0xFF14151A)),
-        bodySmall:
-            AppTypography.caption.copyWith(color: const Color(0x9914151A)),
-        labelSmall:
-            AppTypography.captionMuted.copyWith(color: const Color(0x6614151A)),
+        bodySmall: AppTypography.caption.copyWith(
+          color: const Color(0x9914151A),
+        ),
+        labelSmall: AppTypography.captionMuted.copyWith(
+          color: const Color(0x6614151A),
+        ),
       ),
       iconTheme: const IconThemeData(color: Color(0xFF14151A), size: 24.0),
     );

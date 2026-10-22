@@ -8,21 +8,17 @@ import 'package:vesper/core/platform/keyboard_shortcuts.dart';
 import 'package:vesper/domain/models/track.dart';
 
 void main() {
-  testWidgets('VesperKeyboardShortcuts responds to Space and Arrow keys', (tester) async {
+  testWidgets('VesperKeyboardShortcuts responds to Space and Arrow keys', (
+    tester,
+  ) async {
     final fakeAudio = FakeAudioService();
     await fakeAudio.setQueue(fakeTracks, index: 0, play: false);
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          audioServiceProvider.overrideWithValue(fakeAudio),
-        ],
+        overrides: [audioServiceProvider.overrideWithValue(fakeAudio)],
         child: MaterialApp(
-          home: VesperKeyboardShortcuts(
-            child: Scaffold(
-              body: Container(),
-            ),
-          ),
+          home: VesperKeyboardShortcuts(child: Scaffold(body: Container())),
         ),
       ),
     );
@@ -47,6 +43,26 @@ void main() {
     await tester.pumpAndSettle();
     final queue2 = await fakeAudio.queue.first;
     expect(queue2.currentIndex, 0);
+
+    // Press Arrow Up -> volume up
+    await fakeAudio.setVolume(0.8);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pumpAndSettle();
+    expect(fakeAudio.volume, closeTo(0.85, 0.001));
+
+    // Press Arrow Down -> volume down
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    expect(fakeAudio.volume, closeTo(0.80, 0.001));
+
+    // Press M -> mute toggle
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
+    await tester.pumpAndSettle();
+    expect(fakeAudio.volume, 0.0);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
+    await tester.pumpAndSettle();
+    expect(fakeAudio.volume, closeTo(0.80, 0.001));
 
     // Clean up
     await tester.pumpWidget(const SizedBox.shrink());

@@ -9,10 +9,7 @@ import 'track_context_menu.dart';
 import 'track_row.dart';
 
 class PlaylistDetailSheet extends ConsumerWidget {
-  const PlaylistDetailSheet({
-    super.key,
-    required this.playlist,
-  });
+  const PlaylistDetailSheet({super.key, required this.playlist});
 
   final Playlist playlist;
 
@@ -58,7 +55,10 @@ class PlaylistDetailSheet extends ConsumerWidget {
                 }
               }
             },
-            child: Text('Rename', style: AppTypography.body.copyWith(fontWeight: FontWeight.w600)),
+            child: Text(
+              'Rename',
+              style: AppTypography.body.copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -74,7 +74,10 @@ class PlaylistDetailSheet extends ConsumerWidget {
         backgroundColor: AppColors.surfaceHigh,
         shape: RoundedRectangleBorder(borderRadius: AppRadii.brSheet),
         title: Text('Delete Playlist', style: AppTypography.title),
-        content: Text('Are you sure you want to delete "${playlist.name}"?', style: AppTypography.body),
+        content: Text(
+          'Are you sure you want to delete "${playlist.name}"?',
+          style: AppTypography.body,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
@@ -86,7 +89,13 @@ class PlaylistDetailSheet extends ConsumerWidget {
               if (ctx.mounted) Navigator.of(ctx).pop();
               if (context.mounted) Navigator.of(context).pop();
             },
-            child: Text('Delete', style: AppTypography.body.copyWith(color: AppColors.danger, fontWeight: FontWeight.w600)),
+            child: Text(
+              'Delete',
+              style: AppTypography.body.copyWith(
+                color: AppColors.danger,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
@@ -105,14 +114,19 @@ class PlaylistDetailSheet extends ConsumerWidget {
       height: MediaQuery.of(context).size.height * 0.75,
       decoration: const BoxDecoration(
         color: AppColors.surfaceHigh,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.sheet)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadii.sheet),
+        ),
       ),
       child: Column(
         children: [
           // Drag handle
           Center(
             child: Container(
-              margin: const EdgeInsets.only(top: AppSpacing.s12, bottom: AppSpacing.s8),
+              margin: const EdgeInsets.only(
+                top: AppSpacing.s12,
+                bottom: AppSpacing.s8,
+              ),
               width: 36.0,
               height: 4.0,
               decoration: BoxDecoration(
@@ -122,7 +136,10 @@ class PlaylistDetailSheet extends ConsumerWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16, vertical: AppSpacing.s8),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s16,
+              vertical: AppSpacing.s8,
+            ),
             child: Row(
               children: [
                 Container(
@@ -132,7 +149,11 @@ class PlaylistDetailSheet extends ConsumerWidget {
                     color: AppColors.surface,
                     borderRadius: AppRadii.brCard,
                   ),
-                  child: const Icon(Icons.queue_music_rounded, color: AppColors.accentFallback, size: 28.0),
+                  child: const Icon(
+                    Icons.queue_music_rounded,
+                    color: AppColors.accentFallback,
+                    size: 28.0,
+                  ),
                 ),
                 const SizedBox(width: AppSpacing.s16),
                 Expanded(
@@ -147,12 +168,20 @@ class PlaylistDetailSheet extends ConsumerWidget {
                 ),
                 IconButton(
                   tooltip: 'Rename',
-                  icon: const Icon(Icons.edit_rounded, color: AppColors.textSecondary, size: 20.0),
+                  icon: const Icon(
+                    Icons.edit_rounded,
+                    color: AppColors.textSecondary,
+                    size: 20.0,
+                  ),
                   onPressed: () => _showRenameDialog(context, ref),
                 ),
                 IconButton(
                   tooltip: 'Delete',
-                  icon: const Icon(Icons.delete_outline_rounded, color: AppColors.danger, size: 20.0),
+                  icon: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: AppColors.danger,
+                    size: 20.0,
+                  ),
                   onPressed: () => _confirmDelete(context, ref),
                 ),
               ],
@@ -166,7 +195,10 @@ class PlaylistDetailSheet extends ConsumerWidget {
                 final tracks = snapshot.data ?? [];
                 if (tracks.isEmpty) {
                   return Center(
-                    child: Text('No tracks in this playlist yet', style: AppTypography.captionMuted),
+                    child: Text(
+                      'No tracks in this playlist yet',
+                      style: AppTypography.captionMuted,
+                    ),
                   );
                 }
 

@@ -102,7 +102,9 @@ final likedTracksProvider = NotifierProvider<LikedTracksNotifier, Set<String>>(
   LikedTracksNotifier.new,
 );
 
-final queuePersistenceManagerProvider = Provider<QueuePersistenceManager>((ref) {
+final queuePersistenceManagerProvider = Provider<QueuePersistenceManager>((
+  ref,
+) {
   final audio = ref.watch(audioServiceProvider);
   final settings = ref.watch(settingsRepositoryProvider);
   return QueuePersistenceManager(audio: audio, settings: settings);

@@ -5,6 +5,7 @@ class Album {
     this.albumArtist,
     this.year,
     this.artHash,
+    this.artPath,
   });
 
   final String id;
@@ -12,6 +13,7 @@ class Album {
   final String? albumArtist;
   final int? year;
   final String? artHash;
+  final String? artPath;
 
   @override
   bool operator ==(Object other) =>

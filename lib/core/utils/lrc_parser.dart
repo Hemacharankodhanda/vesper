@@ -5,8 +5,9 @@ class LrcLine {
 }
 
 class LrcParser {
-  static final RegExp _tagRegex =
-      RegExp(r'\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]');
+  static final RegExp _tagRegex = RegExp(
+    r'\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]',
+  );
 
   static List<LrcLine> parse(String content) {
     final lines = <LrcLine>[];

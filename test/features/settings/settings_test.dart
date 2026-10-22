@@ -8,44 +8,54 @@ import 'package:vesper/data/db/database.dart';
 import 'package:vesper/data/repositories/settings_repository.dart';
 
 void main() {
-  test('SettingsRepository persists and loads themeMode and accentMode', () async {
-    final db = AppDatabase(NativeDatabase.memory());
-    final repo = SettingsRepository(database: db);
+  test(
+    'SettingsRepository persists and loads themeMode and accentMode',
+    () async {
+      final db = AppDatabase(NativeDatabase.memory());
+      final repo = SettingsRepository(database: db);
 
-    await repo.saveSetting(SettingsRepository.keyThemeMode, 'light');
-    final loadedTheme = await repo.getSetting(SettingsRepository.keyThemeMode);
-    expect(loadedTheme, 'light');
+      await repo.saveSetting(SettingsRepository.keyThemeMode, 'light');
+      final loadedTheme = await repo.getSetting(
+        SettingsRepository.keyThemeMode,
+      );
+      expect(loadedTheme, 'light');
 
-    await repo.saveSetting(SettingsRepository.keyAccentMode, 'fixed');
-    final loadedAccent = await repo.getSetting(SettingsRepository.keyAccentMode);
-    expect(loadedAccent, 'fixed');
+      await repo.saveSetting(SettingsRepository.keyAccentMode, 'fixed');
+      final loadedAccent = await repo.getSetting(
+        SettingsRepository.keyAccentMode,
+      );
+      expect(loadedAccent, 'fixed');
 
-    await db.close();
-  });
+      await db.close();
+    },
+  );
 
-  test('currentPaletteProvider uses fallback gold when accentMode is fixed', () {
-    final container = ProviderContainer(
-      overrides: [
-        accentModeProvider.overrideWith(() => _FixedAccentNotifier()),
-      ],
-    );
-    addTearDown(container.dispose);
+  test(
+    'currentPaletteProvider uses fallback gold when accentMode is fixed',
+    () {
+      final container = ProviderContainer(
+        overrides: [
+          accentModeProvider.overrideWith(() => _FixedAccentNotifier()),
+        ],
+      );
+      addTearDown(container.dispose);
 
-    final palette = container.read(currentPaletteProvider);
-    expect(palette.light, AppColors.accentFallback);
-  });
+      final palette = container.read(currentPaletteProvider);
+      expect(palette.light, AppColors.accentFallback);
+    },
+  );
 
   test('sleepTimerProvider sets and cancels timer properly', () {
     final container = ProviderContainer(
-      overrides: [
-        audioServiceProvider.overrideWithValue(FakeAudioService()),
-      ],
+      overrides: [audioServiceProvider.overrideWithValue(FakeAudioService())],
     );
     addTearDown(container.dispose);
 
     expect(container.read(sleepTimerProvider), isNull);
 
-    container.read(sleepTimerProvider.notifier).setTimer(const Duration(minutes: 30));
+    container
+        .read(sleepTimerProvider.notifier)
+        .setTimer(const Duration(minutes: 30));
     expect(container.read(sleepTimerProvider), const Duration(minutes: 30));
 
     container.read(sleepTimerProvider.notifier).cancel();

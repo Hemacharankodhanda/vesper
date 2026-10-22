@@ -9,56 +9,67 @@ import 'package:vesper/domain/models/track.dart';
 import 'package:vesper/features/library/library_screen.dart';
 
 void main() {
-  testWidgets('LibraryScreen renders segmented tabs and switches between them', (tester) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(() {
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
-    });
+  testWidgets(
+    'LibraryScreen renders segmented tabs and switches between them',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
 
-    final testAlbums = [
-      const Album(id: 'album_1', title: 'Salt & Static', albumArtist: 'Marlowe Reyes'),
-    ];
-    final testArtists = [
-      const Artist(id: 'artist_1', name: 'Marlowe Reyes'),
-    ];
-
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          libraryTracksProvider.overrideWith((ref) => Stream.value(fakeTracks)),
-          libraryAlbumsProvider.overrideWith((ref) => Stream.value(testAlbums)),
-          libraryArtistsProvider.overrideWith((ref) => Stream.value(testArtists)),
-        ],
-        child: MaterialApp(
-          theme: AppTheme.darkTheme,
-          home: const LibraryScreen(),
+      final testAlbums = [
+        const Album(
+          id: 'album_1',
+          title: 'Salt & Static',
+          albumArtist: 'Marlowe Reyes',
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      ];
+      final testArtists = [const Artist(id: 'artist_1', name: 'Marlowe Reyes')];
 
-    expect(find.text('Library'), findsOneWidget);
-    expect(find.text('Songs'), findsOneWidget);
-    expect(find.text('Albums'), findsOneWidget);
-    expect(find.text('Artists'), findsOneWidget);
-    expect(find.text('Playlists'), findsOneWidget);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            libraryTracksProvider.overrideWith(
+              (ref) => Stream.value(fakeTracks),
+            ),
+            libraryAlbumsProvider.overrideWith(
+              (ref) => Stream.value(testAlbums),
+            ),
+            libraryArtistsProvider.overrideWith(
+              (ref) => Stream.value(testArtists),
+            ),
+          ],
+          child: MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: const LibraryScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    // Initial tab is Songs, fakeTracks should be present
-    expect(find.text('Low Tide Hours'), findsOneWidget);
+      expect(find.text('Library'), findsOneWidget);
+      expect(find.text('Songs'), findsOneWidget);
+      expect(find.text('Albums'), findsOneWidget);
+      expect(find.text('Artists'), findsOneWidget);
+      expect(find.text('Playlists'), findsOneWidget);
 
-    // Switch to Albums tab
-    await tester.tap(find.text('Albums'));
-    await tester.pumpAndSettle();
-    expect(find.text('Salt & Static'), findsOneWidget);
+      // Initial tab is Songs, fakeTracks should be present
+      expect(find.text('Low Tide Hours'), findsOneWidget);
 
-    // Switch to Artists tab
-    await tester.tap(find.text('Artists'));
-    await tester.pumpAndSettle();
-    expect(find.text('Marlowe Reyes'), findsOneWidget);
+      // Switch to Albums tab
+      await tester.tap(find.text('Albums'));
+      await tester.pumpAndSettle();
+      expect(find.text('Salt & Static'), findsOneWidget);
 
-    await tester.pumpWidget(const SizedBox.shrink());
-    await tester.pump(const Duration(milliseconds: 100));
-  });
+      // Switch to Artists tab
+      await tester.tap(find.text('Artists'));
+      await tester.pumpAndSettle();
+      expect(find.text('Marlowe Reyes'), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+    },
+  );
 }

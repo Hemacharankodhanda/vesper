@@ -21,25 +21,22 @@ class PlaylistRepository {
   final app_db.AppDatabase database;
 
   Stream<List<Playlist>> watchPlaylists() {
-    return (database.select(database.playlists)
-          ..orderBy([(p) => OrderingTerm.desc(p.createdAt)]))
-        .watch()
-        .map((rows) => rows.map((r) => Playlist(
-              id: r.id,
-              name: r.name,
-              createdAt: r.createdAt,
-            )).toList());
+    return (database.select(
+      database.playlists,
+    )..orderBy([(p) => OrderingTerm.desc(p.createdAt)])).watch().map(
+      (rows) => rows
+          .map((r) => Playlist(id: r.id, name: r.name, createdAt: r.createdAt))
+          .toList(),
+    );
   }
 
   Future<Playlist> createPlaylist(String name) async {
     final id = 'pl_${DateTime.now().microsecondsSinceEpoch}';
     final now = DateTime.now();
-    await database.into(database.playlists).insert(
-          app_db.PlaylistsCompanion.insert(
-            id: id,
-            name: name,
-            createdAt: now,
-          ),
+    await database
+        .into(database.playlists)
+        .insert(
+          app_db.PlaylistsCompanion.insert(id: id, name: name, createdAt: now),
         );
     return Playlist(id: id, name: name, createdAt: now);
   }
@@ -51,25 +48,27 @@ class PlaylistRepository {
   }
 
   Future<void> deletePlaylist(String playlistId) async {
-    await (database.delete(database.playlistTracks)
-          ..where((pt) => pt.playlistId.equals(playlistId)))
-        .go();
-    await (database.delete(database.playlists)
-          ..where((p) => p.id.equals(playlistId)))
-        .go();
+    await (database.delete(
+      database.playlistTracks,
+    )..where((pt) => pt.playlistId.equals(playlistId))).go();
+    await (database.delete(
+      database.playlists,
+    )..where((p) => p.id.equals(playlistId))).go();
   }
 
   Future<void> addTrackToPlaylist(String playlistId, String trackId) async {
     // Get max position
-    final existing = await (database.select(database.playlistTracks)
-          ..where((pt) => pt.playlistId.equals(playlistId)))
-        .get();
+    final existing = await (database.select(
+      database.playlistTracks,
+    )..where((pt) => pt.playlistId.equals(playlistId))).get();
 
     final nextPos = existing.isEmpty
         ? 0
         : existing.map((e) => e.position).reduce((a, b) => a > b ? a : b) + 1;
 
-    await database.into(database.playlistTracks).insertOnConflictUpdate(
+    await database
+        .into(database.playlistTracks)
+        .insertOnConflictUpdate(
           app_db.PlaylistTracksCompanion.insert(
             playlistId: playlistId,
             trackId: trackId,
@@ -78,43 +77,47 @@ class PlaylistRepository {
         );
   }
 
-  Future<void> removeTrackFromPlaylist(String playlistId, String trackId) async {
-    await (database.delete(database.playlistTracks)
-          ..where((pt) =>
-              pt.playlistId.equals(playlistId) & pt.trackId.equals(trackId)))
+  Future<void> removeTrackFromPlaylist(
+    String playlistId,
+    String trackId,
+  ) async {
+    await (database.delete(database.playlistTracks)..where(
+          (pt) => pt.playlistId.equals(playlistId) & pt.trackId.equals(trackId),
+        ))
         .go();
   }
 
   Future<List<Track>> getPlaylistTracks(String playlistId) async {
-    final ptRows = await (database.select(database.playlistTracks)
-          ..where((pt) => pt.playlistId.equals(playlistId))
-          ..orderBy([(pt) => OrderingTerm.asc(pt.position)]))
-        .get();
+    final ptRows =
+        await (database.select(database.playlistTracks)
+              ..where((pt) => pt.playlistId.equals(playlistId))
+              ..orderBy([(pt) => OrderingTerm.asc(pt.position)]))
+            .get();
 
     if (ptRows.isEmpty) return [];
 
     final trackIds = ptRows.map((r) => r.trackId).toList();
-    final trackRows = await (database.select(database.tracks)
-          ..where((t) => t.id.isIn(trackIds)))
-        .get();
+    final trackRows = await (database.select(
+      database.tracks,
+    )..where((t) => t.id.isIn(trackIds))).get();
 
-    final trackMap = <String, app_db.Track>{
-      for (final r in trackRows) r.id: r,
-    };
+    final trackMap = <String, app_db.Track>{for (final r in trackRows) r.id: r};
 
     final result = <Track>[];
     for (final id in trackIds) {
       final r = trackMap[id];
       if (r != null) {
-        result.add(Track(
-          id: r.id,
-          title: r.title,
-          artist: r.albumArtist ?? 'Unknown Artist',
-          album: r.albumId ?? 'Unknown Album',
-          duration: Duration(milliseconds: r.durationMs),
-          path: r.path,
-          artHash: r.artHash,
-        ));
+        result.add(
+          Track(
+            id: r.id,
+            title: r.title,
+            artist: r.albumArtist ?? 'Unknown Artist',
+            album: r.albumId ?? 'Unknown Album',
+            duration: Duration(milliseconds: r.durationMs),
+            path: r.path,
+            artHash: r.artHash,
+          ),
+        );
       }
     }
     return result;

@@ -27,6 +27,7 @@ class AlbumCard extends StatelessWidget {
       duration: Duration.zero,
       style: album.title.hashCode.abs() % 4,
       artHash: album.artHash,
+      artPath: album.artPath,
     );
 
     return InkWell(
@@ -50,9 +51,7 @@ class AlbumCard extends StatelessWidget {
               album.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: AppTypography.body.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.body.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 2.0),
             Text(

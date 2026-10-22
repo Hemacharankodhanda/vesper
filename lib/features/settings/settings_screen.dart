@@ -36,8 +36,9 @@ class SettingsScreen extends ConsumerWidget {
       builder: (ctx) => Container(
         decoration: const BoxDecoration(
           color: AppColors.surfaceHigh,
-          borderRadius:
-              BorderRadius.vertical(top: Radius.circular(AppRadii.sheet)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppRadii.sheet),
+          ),
         ),
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.s16),
         child: Column(
@@ -46,7 +47,8 @@ class SettingsScreen extends ConsumerWidget {
             Text('Sleep Timer', style: AppTypography.title),
             const SizedBox(height: AppSpacing.s12),
             ...options.entries.map((entry) {
-              final isSelected = (entry.value == null && activeTimer == null) ||
+              final isSelected =
+                  (entry.value == null && activeTimer == null) ||
                   (entry.value != null &&
                       activeTimer != null &&
                       (activeTimer.inMinutes - entry.value!.inMinutes).abs() <=
@@ -55,8 +57,10 @@ class SettingsScreen extends ConsumerWidget {
               return ListTile(
                 title: Text(entry.key, style: AppTypography.body),
                 trailing: isSelected
-                    ? const Icon(Icons.check_rounded,
-                        color: AppColors.accentFallback)
+                    ? const Icon(
+                        Icons.check_rounded,
+                        color: AppColors.accentFallback,
+                      )
                     : null,
                 onTap: () {
                   sleepTimerNotifier.setTimer(entry.value);
@@ -97,37 +101,52 @@ class SettingsScreen extends ConsumerWidget {
               data: (folders) {
                 return Column(
                   children: [
-                    ...folders.map((path) => Container(
-                          margin: const EdgeInsets.only(bottom: AppSpacing.s8),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            borderRadius: AppRadii.brCard,
+                    ...folders.map(
+                      (path) => Container(
+                        margin: const EdgeInsets.only(bottom: AppSpacing.s8),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: AppRadii.brCard,
+                        ),
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.folder_outlined,
+                            color: AppColors.accentFallback,
                           ),
-                          child: ListTile(
-                            leading: const Icon(Icons.folder_outlined,
-                                color: AppColors.accentFallback),
-                            title: Text(path,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: AppTypography.caption),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.close_rounded,
-                                  size: 18, color: AppColors.danger),
-                              onPressed: () => ref
-                                  .read(libraryRepositoryProvider)
-                                  .removeFolder(path),
+                          title: Text(
+                            path,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.caption,
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(
+                              Icons.close_rounded,
+                              size: 18,
+                              color: AppColors.danger,
                             ),
+                            onPressed: () => ref
+                                .read(libraryRepositoryProvider)
+                                .removeFolder(path),
                           ),
-                        )),
+                        ),
+                      ),
+                    ),
                     ListTile(
                       shape: RoundedRectangleBorder(
-                          borderRadius: AppRadii.brCard),
+                        borderRadius: AppRadii.brCard,
+                      ),
                       tileColor: AppColors.surface,
-                      leading: const Icon(Icons.add_rounded,
-                          color: AppColors.textPrimary),
-                      title: Text('Add Music Folder',
-                          style: AppTypography.body
-                              .copyWith(fontWeight: FontWeight.w600)),
+                      leading: const Icon(
+                        Icons.add_rounded,
+                        color: AppColors.textPrimary,
+                      ),
+                      title: Text(
+                        'Add Music Folder',
+                        style: AppTypography.body.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       onTap: () => _pickFolder(ref),
                     ),
                   ],
@@ -154,15 +173,23 @@ class SettingsScreen extends ConsumerWidget {
                       underline: const SizedBox.shrink(),
                       items: const [
                         DropdownMenuItem(
-                            value: ThemeMode.dark, child: Text('Dark')),
+                          value: ThemeMode.dark,
+                          child: Text('Dark'),
+                        ),
                         DropdownMenuItem(
-                            value: ThemeMode.light, child: Text('Light')),
+                          value: ThemeMode.light,
+                          child: Text('Light'),
+                        ),
                         DropdownMenuItem(
-                            value: ThemeMode.system, child: Text('System')),
+                          value: ThemeMode.system,
+                          child: Text('System'),
+                        ),
                       ],
                       onChanged: (mode) {
                         if (mode != null) {
-                          ref.read(themeModeProvider.notifier).setThemeMode(mode);
+                          ref
+                              .read(themeModeProvider.notifier)
+                              .setThemeMode(mode);
                         }
                       },
                     ),
@@ -176,9 +203,13 @@ class SettingsScreen extends ConsumerWidget {
                       underline: const SizedBox.shrink(),
                       items: const [
                         DropdownMenuItem(
-                            value: 'art', child: Text('Dynamic (Album Art)')),
+                          value: 'art',
+                          child: Text('Dynamic (Album Art)'),
+                        ),
                         DropdownMenuItem(
-                            value: 'fixed', child: Text('Fixed (Gold)')),
+                          value: 'fixed',
+                          child: Text('Fixed (Gold)'),
+                        ),
                       ],
                       onChanged: (mode) {
                         if (mode != null) {
@@ -203,8 +234,10 @@ class SettingsScreen extends ConsumerWidget {
                 borderRadius: AppRadii.brCard,
               ),
               child: ListTile(
-                leading: const Icon(Icons.timer_outlined,
-                    color: AppColors.textSecondary),
+                leading: const Icon(
+                  Icons.timer_outlined,
+                  color: AppColors.textSecondary,
+                ),
                 title: Text('Sleep Timer', style: AppTypography.body),
                 subtitle: Text(
                   sleepTimer != null
@@ -212,8 +245,10 @@ class SettingsScreen extends ConsumerWidget {
                       : 'Off',
                   style: AppTypography.captionMuted,
                 ),
-                trailing: const Icon(Icons.chevron_right_rounded,
-                    color: AppColors.textMuted),
+                trailing: const Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppColors.textMuted,
+                ),
                 onTap: () => _showSleepTimerPicker(context, ref),
               ),
             ),
@@ -231,11 +266,15 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Vesper',
-                      style: AppTypography.title.copyWith(fontSize: 18)),
+                  Text(
+                    'Vesper',
+                    style: AppTypography.title.copyWith(fontSize: 18),
+                  ),
                   const SizedBox(height: AppSpacing.s4),
-                  Text('Version 1.0.0 (v1 Release)',
-                      style: AppTypography.captionMuted),
+                  Text(
+                    'Version 1.0.0 (v1 Release)',
+                    style: AppTypography.captionMuted,
+                  ),
                   const SizedBox(height: AppSpacing.s8),
                   Text(
                     'Offline music player for Android and Windows. Tactile, minimal, dark-first audio experience with zero tracking and zero network calls.',
@@ -254,7 +293,10 @@ class SettingsScreen extends ConsumerWidget {
 
   Widget _sectionHeader(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.s8, left: AppSpacing.s4),
+      padding: const EdgeInsets.only(
+        bottom: AppSpacing.s8,
+        left: AppSpacing.s4,
+      ),
       child: Text(
         title,
         style: AppTypography.captionMuted.copyWith(

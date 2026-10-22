@@ -17,7 +17,9 @@ void main() {
 
     // Insert fake tracks
     for (final t in fakeTracks) {
-      await db.into(db.tracks).insert(
+      await db
+          .into(db.tracks)
+          .insert(
             TracksCompanion.insert(
               id: t.id,
               path: '/music/${t.id}.mp3',
@@ -65,26 +67,36 @@ void main() {
     });
 
     test('toggleLike persists liked boolean on track', () async {
-      final initialTrack = await (db.select(db.tracks)..where((t) => t.id.equals('track_1'))).getSingle();
+      final initialTrack = await (db.select(
+        db.tracks,
+      )..where((t) => t.id.equals('track_1'))).getSingle();
       expect(initialTrack.liked, isFalse);
 
       await libraryRepo.toggleLike('track_1');
-      final likedTrack = await (db.select(db.tracks)..where((t) => t.id.equals('track_1'))).getSingle();
+      final likedTrack = await (db.select(
+        db.tracks,
+      )..where((t) => t.id.equals('track_1'))).getSingle();
       expect(likedTrack.liked, isTrue);
 
       await libraryRepo.toggleLike('track_1');
-      final unlikedTrack = await (db.select(db.tracks)..where((t) => t.id.equals('track_1'))).getSingle();
+      final unlikedTrack = await (db.select(
+        db.tracks,
+      )..where((t) => t.id.equals('track_1'))).getSingle();
       expect(unlikedTrack.liked, isFalse);
     });
 
     test('recordTrackPlayed updates playCount and lastPlayedAt', () async {
       await libraryRepo.recordTrackPlayed('track_1');
-      final track1 = await (db.select(db.tracks)..where((t) => t.id.equals('track_1'))).getSingle();
+      final track1 = await (db.select(
+        db.tracks,
+      )..where((t) => t.id.equals('track_1'))).getSingle();
       expect(track1.playCount, 1);
       expect(track1.lastPlayedAt, isNotNull);
 
       await libraryRepo.recordTrackPlayed('track_1');
-      final track2 = await (db.select(db.tracks)..where((t) => t.id.equals('track_1'))).getSingle();
+      final track2 = await (db.select(
+        db.tracks,
+      )..where((t) => t.id.equals('track_1'))).getSingle();
       expect(track2.playCount, 2);
     });
   });

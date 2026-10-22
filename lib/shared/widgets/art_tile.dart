@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../core/theme/tokens.dart';
@@ -35,11 +36,27 @@ class ArtTile extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(radius),
-        child: CustomPaint(
+        child: _buildArtwork(context),
+      ),
+    );
+  }
+
+  Widget _buildArtwork(BuildContext context) {
+    if (track.artPath != null && track.artPath!.isNotEmpty) {
+      return Image.file(
+        File(track.artPath!),
+        fit: BoxFit.cover,
+        cacheWidth: 300,
+        cacheHeight: 300,
+        errorBuilder: (context, error, stackTrace) => CustomPaint(
           painter: ArtPainter(track),
           child: const SizedBox.expand(),
         ),
-      ),
+      );
+    }
+    return CustomPaint(
+      painter: ArtPainter(track),
+      child: const SizedBox.expand(),
     );
   }
 }

@@ -22,6 +22,8 @@ abstract class AudioPlayerService {
   Future<void> addToEnd(Track t);
   Future<void> removeAt(int i);
   Future<void> move(int from, int to);
+  double get volume;
+  Future<void> setVolume(double v);
   Future<void> setSleepTimer(Duration? after);
   Future<void> dispose();
 }

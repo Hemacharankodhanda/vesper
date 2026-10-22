@@ -120,7 +120,8 @@ class QueueSheet extends ConsumerWidget {
                                 const SizedBox(width: AppSpacing.s12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         track.title,
@@ -154,7 +155,9 @@ class QueueSheet extends ConsumerWidget {
                                 ReorderableDragStartListener(
                                   index: i,
                                   child: Container(
-                                    padding: const EdgeInsets.all(AppSpacing.s4),
+                                    padding: const EdgeInsets.all(
+                                      AppSpacing.s4,
+                                    ),
                                     child: const Icon(
                                       Icons.drag_handle_rounded,
                                       size: 20.0,

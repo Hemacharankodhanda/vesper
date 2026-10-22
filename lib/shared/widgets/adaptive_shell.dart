@@ -88,8 +88,7 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell>
                           children: _pages,
                         ),
                       ),
-                      if (showMiniPlayer)
-                        const MiniPlayer(isDesktop: true),
+                      if (showMiniPlayer) const MiniPlayer(isDesktop: true),
                     ],
                   ),
                 ),
@@ -103,13 +102,9 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell>
           body: Column(
             children: [
               Expanded(
-                child: IndexedStack(
-                  index: _currentIndex,
-                  children: _pages,
-                ),
+                child: IndexedStack(index: _currentIndex, children: _pages),
               ),
-              if (showMiniPlayer)
-                const MiniPlayer(isDesktop: false),
+              if (showMiniPlayer) const MiniPlayer(isDesktop: false),
             ],
           ),
           bottomNavigationBar: _buildBottomNav(),

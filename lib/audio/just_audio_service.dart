@@ -405,6 +405,14 @@ class JustAudioService implements AudioPlayerService {
   }
 
   @override
+  double get volume => _player.volume;
+
+  @override
+  Future<void> setVolume(double v) async {
+    await _player.setVolume(v.clamp(0.0, 1.0));
+  }
+
+  @override
   Future<void> setSleepTimer(Duration? after) async {
     _sleepTimer?.cancel();
     if (after != null) {

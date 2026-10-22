@@ -8,10 +8,7 @@ import 'art_tile.dart';
 import 'glass_panel.dart';
 
 class MiniPlayer extends ConsumerWidget {
-  const MiniPlayer({
-    super.key,
-    this.isDesktop = false,
-  });
+  const MiniPlayer({super.key, this.isDesktop = false});
 
   final bool isDesktop;
 
@@ -51,7 +48,8 @@ class MiniPlayer extends ConsumerWidget {
     return GestureDetector(
       onTap: () => _openNowPlaying(context),
       onVerticalDragEnd: (details) {
-        if (details.primaryVelocity != null && details.primaryVelocity! < -150) {
+        if (details.primaryVelocity != null &&
+            details.primaryVelocity! < -150) {
           _openNowPlaying(context);
         }
       },
@@ -149,24 +147,28 @@ class MiniPlayer extends ConsumerWidget {
                           ),
                         ),
                       // Play / Pause button
-                      GestureDetector(
-                        onTap: () {
-                          AppHaptics.selection();
-                          audio.toggle();
-                        },
-                        child: Container(
-                          width: 40.0,
-                          height: 40.0,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isPlaying
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
-                            color: AppColors.bg,
-                            size: 24.0,
+                      Semantics(
+                        button: true,
+                        label: isPlaying ? 'Pause' : 'Play',
+                        child: GestureDetector(
+                          onTap: () {
+                            AppHaptics.selection();
+                            audio.toggle();
+                          },
+                          child: Container(
+                            width: 40.0,
+                            height: 40.0,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              isPlaying
+                                  ? Icons.pause_rounded
+                                  : Icons.play_arrow_rounded,
+                              color: AppColors.bg,
+                              size: 24.0,
+                            ),
                           ),
                         ),
                       ),
@@ -197,10 +199,7 @@ class MiniPlayer extends ConsumerWidget {
 }
 
 class _MiniProgressBar extends ConsumerWidget {
-  const _MiniProgressBar({
-    required this.duration,
-    required this.accentColor,
-  });
+  const _MiniProgressBar({required this.duration, required this.accentColor});
 
   final Duration duration;
   final Color accentColor;

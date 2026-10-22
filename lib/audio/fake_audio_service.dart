@@ -264,6 +264,16 @@ class FakeAudioService implements AudioPlayerService {
     _emitState();
   }
 
+  double _volume = 1.0;
+
+  @override
+  double get volume => _volume;
+
+  @override
+  Future<void> setVolume(double v) async {
+    _volume = v.clamp(0.0, 1.0);
+  }
+
   @override
   Future<void> setSleepTimer(Duration? after) async {
     _sleepTimer?.cancel();

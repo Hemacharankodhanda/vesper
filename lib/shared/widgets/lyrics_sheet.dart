@@ -9,10 +9,7 @@ import '../../domain/models/track.dart';
 import 'glass_panel.dart';
 
 class LyricsSheet extends ConsumerStatefulWidget {
-  const LyricsSheet({
-    super.key,
-    required this.track,
-  });
+  const LyricsSheet({super.key, required this.track});
 
   final Track track;
 
@@ -148,10 +145,7 @@ class _LyricsSheetState extends ConsumerState<LyricsSheet> {
                     style: AppTypography.title.copyWith(fontSize: 18),
                   ),
                   const Spacer(),
-                  Text(
-                    widget.track.title,
-                    style: AppTypography.captionMuted,
-                  ),
+                  Text(widget.track.title, style: AppTypography.captionMuted),
                 ],
               ),
             ),
@@ -177,7 +171,8 @@ class _LyricsSheetState extends ConsumerState<LyricsSheet> {
                         final nextTimestamp = isNext
                             ? _lines[i + 1].timestamp
                             : const Duration(hours: 1);
-                        final isActive = currentPosition >= line.timestamp &&
+                        final isActive =
+                            currentPosition >= line.timestamp &&
                             currentPosition < nextTimestamp;
 
                         return InkWell(

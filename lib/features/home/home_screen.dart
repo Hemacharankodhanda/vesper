@@ -77,10 +77,7 @@ class HomeScreen extends ConsumerWidget {
                       AppSpacing.screenPaddingMobile,
                       AppSpacing.s16,
                     ),
-                    child: Text(
-                      'Listen Now',
-                      style: AppTypography.display,
-                    ),
+                    child: Text('Listen Now', style: AppTypography.display),
                   ),
                 ),
                 // 1. Continue Listening Hero Card
@@ -98,7 +95,12 @@ class HomeScreen extends ConsumerWidget {
                         if (currentTrack?.id == heroTrack.id) {
                           audio.toggle();
                         } else {
-                          audio.setQueue(allTracks, index: allTracks.indexOf(heroTrack).clamp(0, allTracks.length - 1));
+                          audio.setQueue(
+                            allTracks,
+                            index: allTracks
+                                .indexOf(heroTrack)
+                                .clamp(0, allTracks.length - 1),
+                          );
                         }
                       },
                     ),
@@ -113,14 +115,15 @@ class HomeScreen extends ConsumerWidget {
                       AppSpacing.screenPaddingMobile,
                       AppSpacing.s16,
                     ),
-                    child: Text(
-                      'Recently added',
-                      style: AppTypography.title,
-                    ),
+                    child: Text('Recently added', style: AppTypography.title),
                   ),
                 ),
                 SliverToBoxAdapter(
-                  child: _buildRecentlyAdded(context, recentlyAddedAsync, allTracks),
+                  child: _buildRecentlyAdded(
+                    context,
+                    recentlyAddedAsync,
+                    allTracks,
+                  ),
                 ),
                 // 3. Recently Played List
                 SliverToBoxAdapter(
@@ -131,10 +134,7 @@ class HomeScreen extends ConsumerWidget {
                       AppSpacing.screenPaddingMobile,
                       AppSpacing.s12,
                     ),
-                    child: Text(
-                      'Recently played',
-                      style: AppTypography.title,
-                    ),
+                    child: Text('Recently played', style: AppTypography.title),
                   ),
                 ),
                 ..._buildRecentlyPlayedSlivers(
@@ -146,9 +146,7 @@ class HomeScreen extends ConsumerWidget {
                   palette.light,
                   audio,
                 ),
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 96.0),
-                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 96.0)),
               ],
             );
           },
@@ -175,11 +173,7 @@ class HomeScreen extends ConsumerWidget {
           SizedBox(
             width: 88.0,
             height: 88.0,
-            child: ArtTile(
-              track: track,
-              radius: AppRadii.card,
-              shadow: true,
-            ),
+            child: ArtTile(track: track, radius: AppRadii.card, shadow: true),
           ),
           const SizedBox(width: AppSpacing.s16),
           Expanded(
@@ -244,7 +238,9 @@ class HomeScreen extends ConsumerWidget {
       child: recentlyAddedAsync.when(
         loading: () => ListView.builder(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPaddingMobile),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPaddingMobile,
+          ),
           itemCount: 4,
           itemBuilder: (_, _) => Container(
             width: 140.0,
@@ -275,7 +271,9 @@ class HomeScreen extends ConsumerWidget {
 
           return ListView.separated(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPaddingMobile),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.screenPaddingMobile,
+            ),
             itemCount: albums.length,
             separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.s16),
             itemBuilder: (context, i) {
@@ -302,9 +300,7 @@ class HomeScreen extends ConsumerWidget {
   ) {
     return [
       recentlyPlayedAsync.when(
-        loading: () => const SliverToBoxAdapter(
-          child: ShimmerSkeletonRow(),
-        ),
+        loading: () => const SliverToBoxAdapter(child: ShimmerSkeletonRow()),
         error: (_, _) => const SliverToBoxAdapter(child: SizedBox.shrink()),
         data: (recentPlayed) {
           final tracks = recentPlayed.isNotEmpty
@@ -312,24 +308,21 @@ class HomeScreen extends ConsumerWidget {
               : allTracks.take(4).toList();
 
           return SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, i) {
-                final track = tracks[i];
-                final isCurrent = currentTrack?.id == track.id;
+            delegate: SliverChildBuilderDelegate((context, i) {
+              final track = tracks[i];
+              final isCurrent = currentTrack?.id == track.id;
 
-                return TrackRow(
-                  track: track,
-                  isCurrent: isCurrent,
-                  isPlaying: isPlaying,
-                  accentColor: accentColor,
-                  onTap: () {
-                    audio.setQueue(tracks, index: i);
-                  },
-                  onLongPress: () => TrackContextMenu.show(context, track),
-                );
-              },
-              childCount: tracks.length,
-            ),
+              return TrackRow(
+                track: track,
+                isCurrent: isCurrent,
+                isPlaying: isPlaying,
+                accentColor: accentColor,
+                onTap: () {
+                  audio.setQueue(tracks, index: i);
+                },
+                onLongPress: () => TrackContextMenu.show(context, track),
+              );
+            }, childCount: tracks.length),
           );
         },
       ),

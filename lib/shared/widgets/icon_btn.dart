@@ -26,6 +26,7 @@ class IconBtn extends StatelessWidget {
       onPressed: onTap,
       iconSize: size,
       splashRadius: size,
+      constraints: const BoxConstraints(minWidth: 48.0, minHeight: 48.0),
       icon: Icon(
         icon,
         color: active

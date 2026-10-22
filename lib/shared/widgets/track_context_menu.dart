@@ -8,10 +8,7 @@ import '../../domain/models/track.dart';
 import 'art_tile.dart';
 
 class TrackContextMenu extends ConsumerWidget {
-  const TrackContextMenu({
-    super.key,
-    required this.track,
-  });
+  const TrackContextMenu({super.key, required this.track});
 
   final Track track;
 
@@ -39,7 +36,9 @@ class TrackContextMenu extends ConsumerWidget {
             loading: () => const SizedBox(
               height: 100,
               child: Center(
-                child: CircularProgressIndicator(color: AppColors.accentFallback),
+                child: CircularProgressIndicator(
+                  color: AppColors.accentFallback,
+                ),
               ),
             ),
             error: (_, _) => const Text('Could not load playlists'),
@@ -48,11 +47,18 @@ class TrackContextMenu extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.add_rounded, color: AppColors.accentFallback),
+                    leading: const Icon(
+                      Icons.add_rounded,
+                      color: AppColors.accentFallback,
+                    ),
                     title: Text('New playlist', style: AppTypography.body),
                     onTap: () async {
                       Navigator.of(ctx).pop();
-                      _showCreatePlaylistDialog(context, ref, initialTrackId: track.id);
+                      _showCreatePlaylistDialog(
+                        context,
+                        ref,
+                        initialTrackId: track.id,
+                      );
                     },
                   ),
                   const Divider(color: Color(0x1AFFFFFF)),
@@ -63,10 +69,16 @@ class TrackContextMenu extends ConsumerWidget {
                       itemBuilder: (context, i) {
                         final pl = playlists[i];
                         return ListTile(
-                          leading: const Icon(Icons.queue_music_rounded, color: AppColors.textSecondary),
+                          leading: const Icon(
+                            Icons.queue_music_rounded,
+                            color: AppColors.textSecondary,
+                          ),
                           title: Text(pl.name, style: AppTypography.body),
                           onTap: () async {
-                            await playlistRepo.addTrackToPlaylist(pl.id, track.id);
+                            await playlistRepo.addTrackToPlaylist(
+                              pl.id,
+                              track.id,
+                            );
                             if (ctx.mounted) {
                               Navigator.of(ctx).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -87,7 +99,11 @@ class TrackContextMenu extends ConsumerWidget {
     );
   }
 
-  void _showCreatePlaylistDialog(BuildContext context, WidgetRef ref, {String? initialTrackId}) {
+  void _showCreatePlaylistDialog(
+    BuildContext context,
+    WidgetRef ref, {
+    String? initialTrackId,
+  }) {
     final controller = TextEditingController();
     final playlistRepo = ref.read(playlistRepositoryProvider);
 
@@ -117,14 +133,20 @@ class TrackContextMenu extends ConsumerWidget {
               if (name.isNotEmpty) {
                 final created = await playlistRepo.createPlaylist(name);
                 if (initialTrackId != null) {
-                  await playlistRepo.addTrackToPlaylist(created.id, initialTrackId);
+                  await playlistRepo.addTrackToPlaylist(
+                    created.id,
+                    initialTrackId,
+                  );
                 }
                 if (ctx.mounted) {
                   Navigator.of(ctx).pop();
                 }
               }
             },
-            child: Text('Create', style: AppTypography.body.copyWith(fontWeight: FontWeight.w600)),
+            child: Text(
+              'Create',
+              style: AppTypography.body.copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -141,7 +163,9 @@ class TrackContextMenu extends ConsumerWidget {
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.surfaceHigh,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.sheet)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadii.sheet),
+        ),
       ),
       padding: const EdgeInsets.only(bottom: AppSpacing.s24),
       child: Column(
@@ -150,7 +174,10 @@ class TrackContextMenu extends ConsumerWidget {
           // Drag handle
           Center(
             child: Container(
-              margin: const EdgeInsets.only(top: AppSpacing.s12, bottom: AppSpacing.s8),
+              margin: const EdgeInsets.only(
+                top: AppSpacing.s12,
+                bottom: AppSpacing.s8,
+              ),
               width: 36.0,
               height: 4.0,
               decoration: BoxDecoration(
@@ -200,7 +227,10 @@ class TrackContextMenu extends ConsumerWidget {
           const Divider(height: 1.0, color: Color(0x1AFFFFFF)),
           // Options
           ListTile(
-            leading: const Icon(Icons.playlist_play_rounded, color: AppColors.textPrimary),
+            leading: const Icon(
+              Icons.playlist_play_rounded,
+              color: AppColors.textPrimary,
+            ),
             title: Text('Play next', style: AppTypography.body),
             onTap: () {
               audio.playNext(track);
@@ -208,7 +238,10 @@ class TrackContextMenu extends ConsumerWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.playlist_add_rounded, color: AppColors.textPrimary),
+            leading: const Icon(
+              Icons.playlist_add_rounded,
+              color: AppColors.textPrimary,
+            ),
             title: Text('Add to end of queue', style: AppTypography.body),
             onTap: () {
               audio.addToEnd(track);
@@ -216,7 +249,10 @@ class TrackContextMenu extends ConsumerWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.queue_music_rounded, color: AppColors.textPrimary),
+            leading: const Icon(
+              Icons.queue_music_rounded,
+              color: AppColors.textPrimary,
+            ),
             title: Text('Add to playlist', style: AppTypography.body),
             onTap: () {
               Navigator.of(context).pop();
@@ -228,7 +264,10 @@ class TrackContextMenu extends ConsumerWidget {
               isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
               color: isLiked ? AppColors.accentFallback : AppColors.textPrimary,
             ),
-            title: Text(isLiked ? 'Remove from liked' : 'Like song', style: AppTypography.body),
+            title: Text(
+              isLiked ? 'Remove from liked' : 'Like song',
+              style: AppTypography.body,
+            ),
             onTap: () async {
               likedNotifier.toggle(track.id);
               await libraryRepo.toggleLike(track.id);

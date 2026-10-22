@@ -48,7 +48,10 @@ class _ShimmerSkeletonRowState extends State<ShimmerSkeletonRow>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        final opacity = 0.08 + 0.12 * (0.5 + 0.5 * (1.0 - (2.0 * (_controller.value - 0.5)).abs()));
+        final opacity =
+            0.08 +
+            0.12 *
+                (0.5 + 0.5 * (1.0 - (2.0 * (_controller.value - 0.5)).abs()));
         return Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.s16,

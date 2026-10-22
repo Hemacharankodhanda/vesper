@@ -22,7 +22,9 @@ void main() {
 
     // Insert fake tracks into DB
     for (final t in fakeTracks) {
-      await db.into(db.tracks).insert(
+      await db
+          .into(db.tracks)
+          .insert(
             TracksCompanion.insert(
               id: t.id,
               path: '/music/${t.id}.mp3',
@@ -64,27 +66,32 @@ void main() {
       expect(loaded.repeat, AudioRepeatMode.all);
     });
 
-    test('QueuePersistenceManager saves and restores queue paused at position', () async {
-      await fakeAudio.setQueue(fakeTracks, index: 2, play: true);
-      await fakeAudio.seek(const Duration(seconds: 42));
+    test(
+      'QueuePersistenceManager saves and restores queue paused at position',
+      () async {
+        await fakeAudio.setQueue(fakeTracks, index: 2, play: true);
+        await fakeAudio.seek(const Duration(seconds: 42));
 
-      await manager.saveCurrentState(currentPosition: const Duration(seconds: 42));
+        await manager.saveCurrentState(
+          currentPosition: const Duration(seconds: 42),
+        );
 
-      // Reset fake audio to fresh state
-      await fakeAudio.setQueue([], index: 0, play: false);
+        // Reset fake audio to fresh state
+        await fakeAudio.setQueue([], index: 0, play: false);
 
-      // Restore
-      await manager.restoreState();
+        // Restore
+        await manager.restoreState();
 
-      final queue = await fakeAudio.queue.first;
-      expect(queue.tracks.length, fakeTracks.length);
-      expect(queue.currentIndex, 2);
+        final queue = await fakeAudio.queue.first;
+        expect(queue.tracks.length, fakeTracks.length);
+        expect(queue.currentIndex, 2);
 
-      final isPlaying = await fakeAudio.playing.first;
-      expect(isPlaying, isFalse); // Must restore paused mid-song per roadmap
+        final isPlaying = await fakeAudio.playing.first;
+        expect(isPlaying, isFalse); // Must restore paused mid-song per roadmap
 
-      final position = await fakeAudio.position.first;
-      expect(position.inSeconds, 42);
-    });
+        final position = await fakeAudio.position.first;
+        expect(position.inSeconds, 42);
+      },
+    );
   });
 }

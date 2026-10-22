@@ -88,12 +88,12 @@ class PersistedQueueState {
   final AudioRepeatMode repeat;
 
   Map<String, dynamic> toJson() => {
-        'trackIds': trackIds,
-        'currentIndex': currentIndex,
-        'positionMs': positionMs,
-        'shuffle': shuffle,
-        'repeat': repeat.name,
-      };
+    'trackIds': trackIds,
+    'currentIndex': currentIndex,
+    'positionMs': positionMs,
+    'shuffle': shuffle,
+    'repeat': repeat.name,
+  };
 
   factory PersistedQueueState.fromJson(Map<String, dynamic> json) {
     return PersistedQueueState(
@@ -119,15 +119,17 @@ class SettingsRepository {
   static const String keyAccentMode = 'accent_mode';
 
   Future<void> saveSetting(String key, String value) async {
-    await database.into(database.settingsTable).insertOnConflictUpdate(
+    await database
+        .into(database.settingsTable)
+        .insertOnConflictUpdate(
           app_db.SettingsTableCompanion.insert(key: key, value: value),
         );
   }
 
   Future<String?> getSetting(String key) async {
-    final row = await (database.select(database.settingsTable)
-          ..where((s) => s.key.equals(key)))
-        .getSingleOrNull();
+    final row = await (database.select(
+      database.settingsTable,
+    )..where((s) => s.key.equals(key))).getSingleOrNull();
     return row?.value;
   }
 
@@ -147,13 +149,16 @@ class SettingsRepository {
     }
   }
 
-  Future<List<Track>> resolveTracks(List<String> ids, List<Track> fallbackPool) async {
+  Future<List<Track>> resolveTracks(
+    List<String> ids,
+    List<Track> fallbackPool,
+  ) async {
     if (ids.isEmpty) return [];
 
     // Query DB for known tracks
-    final rows = await (database.select(database.tracks)
-          ..where((t) => t.id.isIn(ids)))
-        .get();
+    final rows = await (database.select(
+      database.tracks,
+    )..where((t) => t.id.isIn(ids))).get();
 
     final dbTracksMap = <String, Track>{
       for (final r in rows)
@@ -168,9 +173,7 @@ class SettingsRepository {
         ),
     };
 
-    final fallbackMap = <String, Track>{
-      for (final t in fallbackPool) t.id: t,
-    };
+    final fallbackMap = <String, Track>{for (final t in fallbackPool) t.id: t};
 
     final result = <Track>[];
     for (final id in ids) {

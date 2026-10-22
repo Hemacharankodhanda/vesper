@@ -66,7 +66,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             Expanded(
               child: _query.trim().isEmpty
                   ? _buildRecentSearches()
-                  : _buildSearchResults(repo, audio, currentTrack, isPlaying, palette.light),
+                  : _buildSearchResults(
+                      repo,
+                      audio,
+                      currentTrack,
+                      isPlaying,
+                      palette.light,
+                    ),
             ),
           ],
         ),
@@ -123,7 +129,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   _controller.clear();
                   setState(() => _query = '');
                 },
-                icon: const Icon(Icons.close_rounded, color: AppColors.textMuted),
+                icon: const Icon(
+                  Icons.close_rounded,
+                  color: AppColors.textMuted,
+                ),
               ),
           ],
         ),
@@ -156,10 +165,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               ),
               GestureDetector(
                 onTap: () => setState(() => _recentSearches.clear()),
-                child: Text(
-                  'Clear',
-                  style: AppTypography.captionMuted,
-                ),
+                child: Text('Clear', style: AppTypography.captionMuted),
               ),
             ],
           ),
@@ -173,7 +179,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 backgroundColor: AppColors.surface,
                 side: BorderSide.none,
                 shape: RoundedRectangleBorder(borderRadius: AppRadii.brCard),
-                labelStyle: AppTypography.caption.copyWith(color: AppColors.textPrimary),
+                labelStyle: AppTypography.caption.copyWith(
+                  color: AppColors.textPrimary,
+                ),
                 onPressed: () => _applyRecentSearch(term),
               );
             }).toList(),
@@ -203,9 +211,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         final result = snapshot.data ?? const GroupedSearchResult();
 
         if (result.isEmpty) {
-          return EmptyState(
-            message: 'No results found for "$_query"',
-          );
+          return EmptyState(message: 'No results found for "$_query"');
         }
 
         return ListView(
@@ -233,7 +239,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   isPlaying: isPlaying,
                   accentColor: accentColor,
                   onTap: () {
-                    audio.setQueue(result.tracks, index: result.tracks.indexOf(t));
+                    audio.setQueue(
+                      result.tracks,
+                      index: result.tracks.indexOf(t),
+                    );
                   },
                   onLongPress: () => TrackContextMenu.show(context, t),
                 );
@@ -257,9 +266,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 height: 180.0,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPaddingMobile),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.screenPaddingMobile,
+                  ),
                   itemCount: result.albums.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.s16),
+                  separatorBuilder: (_, _) =>
+                      const SizedBox(width: AppSpacing.s16),
                   itemBuilder: (context, i) {
                     final album = result.albums[i];
                     return AlbumCard(
@@ -294,10 +306,16 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       color: AppColors.surfaceHigh,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.person_rounded, color: AppColors.textSecondary),
+                    child: const Icon(
+                      Icons.person_rounded,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                   title: Text(artist.name, style: AppTypography.body),
-                  trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
+                    color: AppColors.textMuted,
+                  ),
                 );
               }),
             ],

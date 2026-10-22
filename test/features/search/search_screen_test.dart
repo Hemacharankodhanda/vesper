@@ -5,7 +5,9 @@ import 'package:vesper/core/theme/app_theme.dart';
 import 'package:vesper/features/search/search_screen.dart';
 
 void main() {
-  testWidgets('SearchScreen renders search input and recent searches', (tester) async {
+  testWidgets('SearchScreen renders search input and recent searches', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
