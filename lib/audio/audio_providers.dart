@@ -5,11 +5,19 @@ import '../domain/models/track.dart';
 import 'audio_player_service.dart';
 import 'fake_audio_service.dart';
 
-/// Service provider. Can be overridden in tests or for real playback in P2.
+import 'just_audio_service.dart';
+
+/// Service provider. Uses real JustAudioService with graceful fallback to FakeAudioService in tests.
 final audioServiceProvider = Provider<AudioPlayerService>((ref) {
-  final service = FakeAudioService();
-  ref.onDispose(() => service.dispose());
-  return service;
+  try {
+    final service = JustAudioService();
+    ref.onDispose(() => service.dispose());
+    return service;
+  } catch (_) {
+    final service = FakeAudioService();
+    ref.onDispose(() => service.dispose());
+    return service;
+  }
 });
 
 final isPlayingProvider = StreamProvider<bool>((ref) {
