@@ -48,9 +48,11 @@ final queueStateProvider = StreamProvider<QueueState>((ref) {
   return service.queue;
 });
 
-/// Computes palette from current track. If the track declares a palette, use it;
-/// otherwise use fallback. (ImageProvider derivation handles real artwork in P3).
 final currentPaletteProvider = Provider<VesperPalette>((ref) {
+  final accentMode = ref.watch(accentModeProvider);
+  if (accentMode == 'fixed') {
+    return VesperPalette.fallback;
+  }
   final trackAsync = ref.watch(currentTrackProvider);
   final track = trackAsync.value;
   if (track == null || track.palette.length < 3) {
@@ -62,6 +64,24 @@ final currentPaletteProvider = Provider<VesperPalette>((ref) {
     light: track.palette[2],
   );
 });
+
+class SleepTimerNotifier extends Notifier<Duration?> {
+  @override
+  Duration? build() => null;
+
+  void setTimer(Duration? duration) {
+    state = duration;
+    ref.read(audioServiceProvider).setSleepTimer(duration);
+  }
+
+  void cancel() {
+    setTimer(null);
+  }
+}
+
+final sleepTimerProvider = NotifierProvider<SleepTimerNotifier, Duration?>(
+  SleepTimerNotifier.new,
+);
 
 class LikedTracksNotifier extends Notifier<Set<String>> {
   @override

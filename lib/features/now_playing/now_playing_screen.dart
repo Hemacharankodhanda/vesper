@@ -12,6 +12,7 @@ import '../../shared/widgets/art_tile.dart';
 import '../../shared/widgets/icon_btn.dart';
 import '../../shared/widgets/play_button.dart';
 import '../../shared/widgets/seek_bar.dart';
+import '../../shared/widgets/lyrics_sheet.dart';
 import '../queue/queue_sheet.dart';
 
 class NowPlayingScreen extends ConsumerStatefulWidget {
@@ -247,6 +248,13 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> {
               ),
             ),
           ),
+          IconBtn(
+            icon: Icons.subtitles_outlined,
+            tooltip: 'Lyrics',
+            onTap: () => LyricsSheet.show(context, track),
+            active: true,
+          ),
+          const SizedBox(width: AppSpacing.s8),
           IconBtn(
             icon: Icons.queue_music_rounded,
             tooltip: 'Queue',

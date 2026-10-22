@@ -15,6 +15,7 @@ import '../../shared/widgets/playlist_detail_sheet.dart';
 import '../../shared/widgets/shimmer_skeleton.dart';
 import '../../shared/widgets/track_context_menu.dart';
 import '../../shared/widgets/track_row.dart';
+import '../settings/settings_screen.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -107,6 +108,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             tooltip: 'Add Music Folder',
             onPressed: _pickAndScanFolder,
             icon: const Icon(Icons.add_rounded, color: AppColors.textPrimary),
+          ),
+          IconButton(
+            tooltip: 'Settings',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            ),
+            icon: const Icon(Icons.settings_outlined, color: AppColors.textPrimary),
           ),
         ],
       ),

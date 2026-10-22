@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/queue_state.dart';
 import '../../domain/models/track.dart';
@@ -9,6 +10,67 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   final db = ref.watch(appDatabaseProvider);
   return SettingsRepository(database: db);
 });
+
+class ThemeModeNotifier extends Notifier<ThemeMode> {
+  @override
+  ThemeMode build() {
+    _load();
+    return ThemeMode.dark;
+  }
+
+  Future<void> _load() async {
+    final repo = ref.read(settingsRepositoryProvider);
+    final value = await repo.getSetting(SettingsRepository.keyThemeMode);
+    if (value != null) {
+      state = switch (value) {
+        'light' => ThemeMode.light,
+        'system' => ThemeMode.system,
+        _ => ThemeMode.dark,
+      };
+    }
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    state = mode;
+    final repo = ref.read(settingsRepositoryProvider);
+    final str = switch (mode) {
+      ThemeMode.light => 'light',
+      ThemeMode.system => 'system',
+      ThemeMode.dark => 'dark',
+    };
+    await repo.saveSetting(SettingsRepository.keyThemeMode, str);
+  }
+}
+
+final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
+  ThemeModeNotifier.new,
+);
+
+class AccentModeNotifier extends Notifier<String> {
+  @override
+  String build() {
+    _load();
+    return 'art';
+  }
+
+  Future<void> _load() async {
+    final repo = ref.read(settingsRepositoryProvider);
+    final value = await repo.getSetting(SettingsRepository.keyAccentMode);
+    if (value != null) {
+      state = value;
+    }
+  }
+
+  Future<void> setAccentMode(String mode) async {
+    state = mode;
+    final repo = ref.read(settingsRepositoryProvider);
+    await repo.saveSetting(SettingsRepository.keyAccentMode, mode);
+  }
+}
+
+final accentModeProvider = NotifierProvider<AccentModeNotifier, String>(
+  AccentModeNotifier.new,
+);
 
 class PersistedQueueState {
   const PersistedQueueState({
@@ -53,6 +115,8 @@ class SettingsRepository {
   final app_db.AppDatabase database;
 
   static const String keyQueueState = 'queue_state';
+  static const String keyThemeMode = 'theme_mode';
+  static const String keyAccentMode = 'accent_mode';
 
   Future<void> saveSetting(String key, String value) async {
     await database.into(database.settingsTable).insertOnConflictUpdate(
