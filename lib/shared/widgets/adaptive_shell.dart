@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../audio/audio_providers.dart';
 import '../../core/theme/tokens.dart';
+import '../../data/repositories/library_repository.dart';
+import '../../domain/models/track.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/library/library_screen.dart';
 import '../../features/now_playing/now_playing_screen.dart';
@@ -59,6 +61,13 @@ class _AdaptiveShellState extends ConsumerState<AdaptiveShell>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<Track?>>(currentTrackProvider, (prev, next) {
+      final track = next.value;
+      if (track != null && track.id != prev?.value?.id) {
+        ref.read(libraryRepositoryProvider).recordTrackPlayed(track.id);
+      }
+    });
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isDesktop = constraints.maxWidth >= AppBreakpoints.compact;

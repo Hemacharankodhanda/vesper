@@ -7,6 +7,7 @@ import '../../shared/widgets/album_card.dart';
 import '../../shared/widgets/detail_sheet.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/shimmer_skeleton.dart';
+import '../../shared/widgets/track_context_menu.dart';
 import '../../shared/widgets/track_row.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
@@ -234,6 +235,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   onTap: () {
                     audio.setQueue(result.tracks, index: result.tracks.indexOf(t));
                   },
+                  onLongPress: () => TrackContextMenu.show(context, t),
                 );
               }),
             ],

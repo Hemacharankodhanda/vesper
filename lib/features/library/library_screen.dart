@@ -4,13 +4,16 @@ import '../../audio/audio_providers.dart';
 import '../../core/platform/folder_picker.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/repositories/library_repository.dart';
+import '../../data/repositories/playlist_repository.dart';
 import '../../domain/models/album.dart';
 import '../../domain/models/artist.dart';
 import '../../domain/models/track.dart';
 import '../../shared/widgets/album_card.dart';
 import '../../shared/widgets/detail_sheet.dart';
 import '../../shared/widgets/empty_state.dart';
+import '../../shared/widgets/playlist_detail_sheet.dart';
 import '../../shared/widgets/shimmer_skeleton.dart';
+import '../../shared/widgets/track_context_menu.dart';
 import '../../shared/widgets/track_row.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
@@ -184,6 +187,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   onTap: () {
                     ref.read(audioServiceProvider).setQueue(tracks, index: i);
                   },
+                  onLongPress: () => TrackContextMenu.show(context, track),
                 );
               },
             ),
@@ -321,10 +325,82 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     );
   }
 
+  void _showCreatePlaylistDialog() {
+    final controller = TextEditingController();
+    final playlistRepo = ref.read(playlistRepositoryProvider);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surfaceHigh,
+        shape: RoundedRectangleBorder(borderRadius: AppRadii.brSheet),
+        title: Text('New Playlist', style: AppTypography.title),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          style: AppTypography.body,
+          decoration: const InputDecoration(
+            hintText: 'Playlist name',
+            hintStyle: AppTypography.captionMuted,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text('Cancel', style: AppTypography.captionMuted),
+          ),
+          TextButton(
+            onPressed: () async {
+              final name = controller.text.trim();
+              if (name.isNotEmpty) {
+                await playlistRepo.createPlaylist(name);
+                if (ctx.mounted) Navigator.of(ctx).pop();
+              }
+            },
+            child: Text('Create', style: AppTypography.body.copyWith(fontWeight: FontWeight.w600)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPlaylistsView() {
-    return const EmptyState(
-      message: 'No playlists created yet',
-      actionLabel: 'Create Playlist',
+    final playlistsAsync = ref.watch(playlistsProvider);
+
+    return playlistsAsync.when(
+      loading: () => const Center(child: ShimmerSkeletonRow()),
+      error: (_, _) => const EmptyState(message: 'Could not load playlists'),
+      data: (playlists) {
+        if (playlists.isEmpty) {
+          return EmptyState(
+            message: 'No playlists created yet',
+            actionLabel: 'Create Playlist',
+            onAction: _showCreatePlaylistDialog,
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.only(bottom: 96.0),
+          itemCount: playlists.length,
+          itemBuilder: (context, i) {
+            final playlist = playlists[i];
+            return ListTile(
+              leading: Container(
+                width: 44.0,
+                height: 44.0,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceHigh,
+                  borderRadius: AppRadii.brSmall,
+                ),
+                child: const Icon(Icons.queue_music_rounded, color: AppColors.accentFallback),
+              ),
+              title: Text(playlist.name, style: AppTypography.body),
+              trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
+              onTap: () => PlaylistDetailSheet.show(context, playlist),
+            );
+          },
+        );
+      },
     );
   }
 }

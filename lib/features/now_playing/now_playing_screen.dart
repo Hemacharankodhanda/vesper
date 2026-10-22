@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../audio/audio_providers.dart';
 import '../../core/theme/palette.dart';
 import '../../core/theme/tokens.dart';
+import '../../data/repositories/library_repository.dart';
 import '../../domain/models/queue_state.dart';
 import '../../domain/models/track.dart';
 import '../../shared/widgets/art_tile.dart';
@@ -349,8 +350,10 @@ class _NowPlayingScreenState extends ConsumerState<NowPlayingScreen> {
         ),
         IconButton(
           tooltip: isLiked ? 'Remove from liked' : 'Like',
-          onPressed: () =>
-              ref.read(likedTracksProvider.notifier).toggle(track.id),
+          onPressed: () {
+            ref.read(likedTracksProvider.notifier).toggle(track.id);
+            ref.read(libraryRepositoryProvider).toggleLike(track.id);
+          },
           icon: AnimatedSwitcher(
             duration: AppMotion.fast,
             transitionBuilder: (child, animation) =>

@@ -11,6 +11,7 @@ import '../../shared/widgets/art_tile.dart';
 import '../../shared/widgets/detail_sheet.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/shimmer_skeleton.dart';
+import '../../shared/widgets/track_context_menu.dart';
 import '../../shared/widgets/track_row.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -324,6 +325,7 @@ class HomeScreen extends ConsumerWidget {
                   onTap: () {
                     audio.setQueue(tracks, index: i);
                   },
+                  onLongPress: () => TrackContextMenu.show(context, track),
                 );
               },
               childCount: tracks.length,
